@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="border_margin">0dp</dimen>
+    <dimen name="border_height">0.5dp</dimen>
+</resources>

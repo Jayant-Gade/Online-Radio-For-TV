@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical" android:padding="16dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/border_height"
+            android:background="#CCCCCC"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin"/>
+        <!-- Rows for stations -->
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Indian Radio Stations" />
+
+        <LinearLayout
+            android:id="@+id/row1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <LinearLayout
+            android:id="@+id/row2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/border_height"
+            android:background="#CCCCCC"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin"/>
+        <LinearLayout
+            android:id="@+id/row_s"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="0dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/border_height"
+            android:background="#CCCCCC"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin"/>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Favorites/Recents" />
+
+        <LinearLayout
+            android:id="@+id/row3"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+        <LinearLayout
+            android:id="@+id/row4"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+        <LinearLayout
+            android:id="@+id/row5"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+        <LinearLayout
+            android:id="@+id/row6"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Now playing info -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/border_height"
+            android:background="#CCCCCC"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/radioIcon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="centerInside" />
+
+            <TextView
+                android:id="@+id/radioName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Not playing"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/playbackStatusGif"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="Playback status GIF"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/logText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</ScrollView>
