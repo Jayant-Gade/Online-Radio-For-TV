@@ -1,7 +1,6 @@
-package com.example.radio
+package com.jay.onlinetvradio
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -17,21 +16,15 @@ import android.provider.MediaStore
 import android.content.ContentValues
 import android.content.ContentUris
 import android.net.Uri
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import android.view.View
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
 import android.app.PendingIntent
 import android.content.Intent
 
 import androidx.media3.ui.PlayerNotificationManager
-import androidx.core.app.NotificationCompat
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
-import androidx.media.session.MediaButtonReceiver
+
 //import androidx.media.session.MediaSessionCompat
 
 
@@ -125,12 +118,13 @@ class MainActivity : AppCompatActivity() {
         addStationButton("Mirchi Love","https://liveradios.in/wp-content/uploads/mirchilove-1.jpg", "https://2.mystreaming.net/uber/lrbollywood/icecast.audio", row1)
         addStationButton("Big FM", "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png","https://listen.openstream.co/4434/audio", row1)
         addStationButton("Red FM", "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content","https://stream.zeno.fm/9phrkb1e3v8uv", row1)
-        addStationButton("My FM","https://myfmindia.com/images/logo.png","https://stream.zeno.fm/8xga0gwdhg0uv",row1)
+        addStationButton("Fever 104 FM","https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg","https://radio.canstream.co.uk:8115/live.mp3",row1)
         addStationButton("Radio Mirchi", "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg","https://eu8.fastcast4u.com/proxy/clyedupq/stream", row2)
         addStationButton("Vividh Bharati-s1","https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg", "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", row2)
         addStationButton("Vividh Bharati-s2", "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg","https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8", row2)
         addStationButton("AIR FM Rainbow","https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",row2)
         addStationButton("AIR FM Gold","https://onlineradiofm.in/assets/image/radio/180/fmgold.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",row2)
+
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
         val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
@@ -416,66 +410,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun log(msg: String, level: String = "INFO", tag: String = "MainActivity") {
-        runOnUiThread { logText.text = msg }
-
-        val resolver = contentResolver
-        val collection = MediaStore.Files.getContentUri("external")
-
-        val projection = arrayOf(MediaStore.Files.FileColumns._ID)
-        val selection = "${MediaStore.Files.FileColumns.RELATIVE_PATH}=? AND ${MediaStore.Files.FileColumns.DISPLAY_NAME}=?"
-        val selectionArgs = arrayOf("Documents/radiolog/", "log.txt")
-
-        var uri: Uri? = null
-
-        val cursor = resolver.query(collection, projection, selection, selectionArgs, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val id = it.getLong(0)
-                uri = ContentUris.withAppendedId(collection, id)
-            }
-        }
-
-        // If not found → create it & add header
-        if (uri == null) {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Files.FileColumns.DISPLAY_NAME, "log.txt")
-                put(MediaStore.Files.FileColumns.MIME_TYPE, "text/plain")
-                put(MediaStore.Files.FileColumns.RELATIVE_PATH, "Documents/radiolog/")
-            }
-            uri = resolver.insert(collection, contentValues)
-
-            // Write header
-            if (uri != null) {
-                val header = "=== App Log File ===\n" +
-                        "Device: ${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}\n" +
-                        "Android: ${android.os.Build.VERSION.RELEASE}\n" +
-                        "App: ${packageName}\n" +
-                        "Generated: ${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())}\n\n"
-                resolver.openOutputStream(uri, "wa")?.use { output ->
-                    output.write(header.toByteArray())
-                }
-            }
-        }
-
-        // Write detailed log line
-        if (uri != null) {
-            try {
-                val logLine = formatLogLine(level, tag, msg) + "\n"
-                resolver.openOutputStream(uri, "wa")?.use { output ->
-                    output.write(logLine.toByteArray())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    private fun log(msg: String) {
+        runOnUiThread {
+            logText.text = msg
         }
     }
 
-    private fun formatLogLine(level: String, tag: String, msg: String): String {
-        val time = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.getDefault())
-            .format(java.util.Date())
-        return "$time [$level] [$tag]: $msg"
-    }
     private fun updatePlaybackGif(isPlaying: Boolean) {
         val gifRes = if (isPlaying) R.drawable.playing else R.drawable.not_playing
         Glide.with(this).asGif().load(gifRes).into(playbackStatusGif)
@@ -483,7 +423,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         playerNotificationManager.setPlayer(null)
         mediaSession.release()
         exoPlayer.release()

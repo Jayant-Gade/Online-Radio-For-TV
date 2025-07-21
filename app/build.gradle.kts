@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.radio"
+    namespace = "com.jay.onlinetvradio"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.radio"
+        applicationId = "com.jay.onlinetvradio"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

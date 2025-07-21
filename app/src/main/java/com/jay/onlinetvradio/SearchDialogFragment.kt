@@ -1,4 +1,4 @@
-package com.example.radio
+package com.jay.onlinetvradio
 
 import android.app.Dialog
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.example.radio
+package com.jay.onlinetvradio
 
 import android.view.LayoutInflater
 import android.view.View

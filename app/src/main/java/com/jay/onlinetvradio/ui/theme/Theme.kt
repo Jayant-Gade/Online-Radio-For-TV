@@ -1,4 +1,4 @@
-package com.example.radio.ui.theme
+package com.jay.onlinetvradio.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
