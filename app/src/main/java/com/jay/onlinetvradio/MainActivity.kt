@@ -20,12 +20,10 @@ import android.view.View
 import androidx.media3.session.MediaSession
 import android.app.PendingIntent
 import android.content.Intent
-
 import androidx.media3.ui.PlayerNotificationManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 
-//import androidx.media.session.MediaSessionCompat
 
 
 
@@ -37,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
+
+
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
     private val okHttpClient = OkHttpClient()
@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         playbackStatusGif = findViewById(R.id.playbackStatusGif)
 
@@ -85,7 +87,6 @@ class MainActivity : AppCompatActivity() {
             .build()
         initApiServer()
 
-        //val mediaSession = MediaSessionCompat(this, "RadioSession")
 
         val channelId = "radio_playback_channel"
 
@@ -96,7 +97,6 @@ class MainActivity : AppCompatActivity() {
         )
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
-        //playerNotificationManager.setMediaSessionToken(mediaSession.sessionToken)
 
         playerNotificationManager = PlayerNotificationManager.Builder(
             this,
@@ -309,6 +309,7 @@ class MainActivity : AppCompatActivity() {
         if (currentStreamName == name && exoPlayer.isPlaying) {
             // Same station clicked & already playing → pause
             exoPlayer.pause()
+
             log("Paused: $name")
             return
         }
