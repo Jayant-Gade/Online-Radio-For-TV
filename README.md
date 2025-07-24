@@ -236,6 +236,7 @@ Resources used in Apps:
 
 Resources used for Readme:
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+* [SVGOMG](https://github.com/jakearchibald/svgomg)
 * [Img Shields](https://shields.io)
 * [SVG Repo](https://www.svgrepo.com/)
 * [md-badges](https://github.com/inttter/md-badges)
