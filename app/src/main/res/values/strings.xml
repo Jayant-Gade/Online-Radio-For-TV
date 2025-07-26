@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Online Radio for TV</string>
+    <string name="error">Error Occurred</string>
+    <string name="search">Search Stations</string>
 </resources>

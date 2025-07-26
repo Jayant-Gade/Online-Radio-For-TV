@@ -11,7 +11,7 @@ import org.json.JSONObject
 
 class InfoDialogFragment(private val station: JSONObject) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(requireContext())
+        val dialog = Dialog(requireContext(), R.style.Theme_Radio_Info)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_info)
 

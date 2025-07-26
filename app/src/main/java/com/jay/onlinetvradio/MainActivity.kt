@@ -12,9 +12,6 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.concurrent.thread
-import android.provider.MediaStore
-import android.content.ContentValues
-//import android.content.ContentUris
 import android.net.Uri
 import android.view.View
 import androidx.media3.session.MediaSession
@@ -23,9 +20,9 @@ import android.content.Intent
 import androidx.media3.ui.PlayerNotificationManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.view.animation.AnimationUtils
-
-
+import android.util.Log
+import androidx.core.content.edit
+import kotlin.text.substringBefore
 
 
 
@@ -36,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
+
     @androidx.media3.common.util.UnstableApi
 
 
@@ -50,12 +48,11 @@ class MainActivity : AppCompatActivity() {
 
     private var currentStreamName: String? = null
 
-    private var vividhs1server: String = "_Hindi"
-    private var vividhs2server: String = "Maharashtra_Hindi"
 
     private lateinit var playbackStatusGif: ImageView
 
     var apiServer: String? = null
+
     @androidx.media3.common.util.UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,26 +111,122 @@ class MainActivity : AppCompatActivity() {
             setUseNextAction(false)
             setUsePlayPauseActions(true)
         }
+        //adding servers
+        saveServerList(
+            "Vividh Bharati",
+            listOf(
+                Triple(
+                    "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+                    "Hindi",
+                    "All India"
+                ),
+                Triple(
+                    "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
+                    "Marathi",
+                    "Nagpur"
+                ),
+                Triple("https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio238/hlspbaudio238_Auto.m3u8",
+                    "Hindi",
+                    "Delhi"
+                ),
+                Triple("\thttps://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio011/hlspbaudio011_Auto.m3u8",
+                    "Marathi",
+                    "Mumbai"
+                )
+            )
+        )
+
+        //add update states on first run to update states and languages
+        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        val isFirstRun = prefs.getBoolean("is_first_run", true)
+
+        if (isFirstRun) {
+            Log.d(
+                "FirstRun", "entering first run!"
+            )
+
+            updateStationStateAndLanguageInPrefs("Vividh Bharati-1+r2", "All India", "Hindi")
+            updateStationStateAndLanguageInPrefs("Vividh Bharati-2+r2", "Nagpur", "Marathi")
+        } else {
+            Log.d("FirstRun", "No server list found for ")
+        }
+
+        // finally, set flag so it won't run again
+        prefs.edit {
+            putBoolean("is_first_run", false)
+        }
+        Log.d("FirstRun", "lol adding buttons")
 
         // Add fixed stations directly:
-        //addStationButton(name->"name-rownumber+servername_language",iconurl,streamurl,rownumber)
-        addStationButton("Radio City-r1+_","https://www.radiocity.in/rc-new/images/RC-logonew.png", "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA", row1)
-        addStationButton("Mirchi Love-r1+_","https://liveradios.in/wp-content/uploads/mirchilove-1.jpg", "https://2.mystreaming.net/uber/lrbollywood/icecast.audio", row1)
-        addStationButton("Big FM-r1+_", "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png","https://listen.openstream.co/4434/audio", row1)
-        addStationButton("Red FM-r1+_", "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content","https://stream.zeno.fm/9phrkb1e3v8uv", row1)
-        addStationButton("Fever 104 FM-r1+_","https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg","https://radio.canstream.co.uk:8115/live.mp3",row1)
-        addStationButton("Radio Mirchi-r2+_", "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg","https://eu8.fastcast4u.com/proxy/clyedupq/stream", row2)
-        addStationButton("Vividh Bharati-r2+_".replace("_", vividhs1server),"https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg", "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", row2)
-        addStationButton("Vividh Bharati-r2+_".replace("_", vividhs2server), "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg","https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8", row2)
-        addStationButton("AIR FM Rainbow-r2+_","https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",row2)
-        addStationButton("AIR FM Gold-r2+_","https://onlineradiofm.in/assets/image/radio/180/fmgold.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",row2)
-
+        //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
+        addStationButton(
+            "Radio City-+r1",
+            "https://www.radiocity.in/rc-new/images/RC-logonew.png",
+            "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA",
+            row1
+        )
+        addStationButton(
+            "Mirchi Love-+r1",
+            "https://liveradios.in/wp-content/uploads/mirchilove-1.jpg",
+            "https://2.mystreaming.net/uber/lrbollywood/icecast.audio",
+            row1
+        )
+        addStationButton(
+            "Big FM-+r1",
+            "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png",
+            "https://listen.openstream.co/4434/audio",
+            row1
+        )
+        addStationButton(
+            "Red FM-+r1",
+            "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content",
+            "https://stream.zeno.fm/9phrkb1e3v8uv",
+            row1
+        )
+        addStationButton(
+            "Fever 104 FM-+r1",
+            "https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg",
+            "https://radio.canstream.co.uk:8115/live.mp3",
+            row1
+        )
+        addStationButton(
+            "Radio Mirchi-+r2",
+            "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg",
+            "https://eu8.fastcast4u.com/proxy/clyedupq/stream",
+            row2
+        )
+        addStationButton(
+            "Vividh Bharati-1+r2",
+            "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
+            "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+            row2
+        )
+        addStationButton(
+            "Vividh Bharati-2+r2",
+            "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
+            "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
+            row2
+        )
+        addStationButton(
+            "AIR FM Rainbow-+r2",
+            "https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp",
+            "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",
+            row2
+        )
+        addStationButton(
+            "AIR FM Gold-+r2",
+            "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp",
+            "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",
+            row2
+        )
+        //Log.d("MyApp","helloooo")
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
         val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
         val searchIcon = searchButtonView.findViewById<ImageView>(R.id.stationIcon)
 
-        searchText.text = "Search"
+
+        searchText.setText(R.string.search)
         searchIcon.setImageResource(android.R.drawable.ic_menu_search) // or your custom icon
 
         searchButtonView.setOnClickListener { openSearchDialog() }
@@ -163,6 +256,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun updateStationStateAndLanguageInPrefs(
+        exactStationName: String,
+        state: String?,
+        language: String?
+    ) {
+        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        prefs.edit {
+            putString("${exactStationName}_selected_language", language)
+            putString("${exactStationName}_selected_state", state)
+        }
+    Log.d("FirstRun",
+    "Saved for $exactStationName: state=$state, language=$language")
+}
     private fun initApiServer() {
         val servers = listOf("de1.api.radio-browser.info", "fi1.api.radio-browser.info",
             "fr1.api.radio-browser.info", "nl1.api.radio-browser.info")
@@ -181,23 +287,20 @@ class MainActivity : AppCompatActivity() {
             if (apiServer == null) log("All servers failed")
         }
     }
-    private fun pendingIntentToOpenApp(): PendingIntent {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-    }
 
     private fun addStationButton(name: String, iconUrl: String?, link: String, parent: LinearLayout) {
-//      name-rownumber+servername_language
+//      name-number(if same 2)+rownumber
+        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
         val meta = JSONObject()
-        meta.put("name", name.substringBefore("-"))
+        meta.put("name", name.substringBefore("+"))
         meta.put("countrycode","India")
         meta.put("tags","Indian Music")
         meta.put("favicon",iconUrl)
-        if (name.substringAfter("_")==""){
+        val savedLanguage = prefs.getString("${name}_selected_language", null)
+        if (savedLanguage==null){
         meta.put("languagecodes","Hindi")}
         else {
-            meta.put("languagecodes",name.substringAfter("_"))
+            meta.put("languagecodes",savedLanguage)
         }
 
 
@@ -206,18 +309,38 @@ class MainActivity : AppCompatActivity() {
         val iconView = view.findViewById<ImageView>(R.id.stationIcon)
         view.tag = meta
 
-
-        nameText.text = StringBuilder()
-            .append("${name.substringBefore("-")}\n")
-            .append("${name.substringAfter("+").substringBefore("_")}")
-            .toString()
+        val selectedState=prefs.getString("${name}_selected_state", null)
+        nameText.text = buildString {
+            append(name.substringBefore("+").replace("-"," "))
+            if (!selectedState.isNullOrEmpty()) {
+                append("\n$selectedState")
+            }
+        }
 
         if (!iconUrl.isNullOrEmpty()) {
             Glide.with(this).load(iconUrl).into(iconView)
         } else {
             iconView.setImageResource(R.mipmap.ic_launcher)
         }
-        view.setOnClickListener { playStationDirect(name, iconUrl, link) }
+        view.setOnClickListener {
+
+            val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+            val savedLink = prefs.getString("${name}_selected_link", null)
+
+            // fallback order:
+            // 1. saved link (from prefs)
+            // ##SKIPPED link saved in meta.tag (e.g., meta.optString("server"))
+            // 2. original default link passed to function
+
+            //val meta = view.tag as? JSONObject
+            //val metaLink = meta?.optString("server")
+            val finalLink = savedLink ?: link
+            Log.d("MyApp", "Saved link: $savedLink, metaLink: unused, default: $link")
+
+            playStationDirect(name, iconUrl, finalLink)
+
+
+        }
         view.setOnLongClickListener {
             showContextMenudef(view, name, link, meta)
             true
@@ -228,7 +351,25 @@ class MainActivity : AppCompatActivity() {
         }
         runOnUiThread { parent.addView(view, params) }
     }
-
+    private fun saveServerList(
+        stationKey: String,
+        servers: List<Triple<String, String, String>> // Pair<url, language>
+    ) {
+        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        val jsonArray = JSONArray().apply {
+            servers.forEach { (url, language, name) ->
+                put(JSONObject().apply {
+                    put("url", url)
+                    put("language", language)
+                    put("state", name)
+                    // you can also add "icon", etc.
+                })
+            }
+        }
+        prefs.edit {
+            putString("${stationKey}_servers", jsonArray.toString())
+        }
+    }
 
 
 
@@ -292,7 +433,9 @@ class MainActivity : AppCompatActivity() {
             put("meta", meta)
         }
         arr.put(obj)
-        prefs.edit().putString("stations", arr.toString()).apply()
+        prefs.edit {
+            putString("stations", arr.toString())
+        }
     }
 
 
@@ -321,7 +464,9 @@ class MainActivity : AppCompatActivity() {
                 newArr.put(obj)
             }
         }
-        prefs.edit().putString("stations", newArr.toString()).apply()
+        prefs.edit {
+            putString("stations", newArr.toString())
+        }
         log("Removed station with link: $link")
     }
 
@@ -331,11 +476,11 @@ class MainActivity : AppCompatActivity() {
             // Same station clicked & already playing → pause
             exoPlayer.pause()
 
-            log("Paused: ${name.substringBefore("-")}")
+            log("Paused: ${name.substringBefore("+")}")
             return
         }
         else {
-            log("Playing: ${name.substringBefore("-")}")
+            log("Playing: ${name.substringBefore("+")}")
             try {
                 exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
                 exoPlayer.setMediaItem(
@@ -343,17 +488,18 @@ class MainActivity : AppCompatActivity() {
                         .setUri(streamUrl)
                         .setMediaMetadata(
                             androidx.media3.common.MediaMetadata.Builder()
-                                .setTitle(name.substringBefore("-"))
-                                .setArtworkUri(iconUrl?.let { Uri.parse(it) })
+                                .setTitle(name.substringBefore("+"))
+                                .setArtworkUri(iconUrl?.run(Uri::parse))
                                 .build()
                         )
                         .build()
                 )
+                Log.d("MyApp","playing $streamUrl")
                 currentStreamName = name
                 exoPlayer.prepare()
                 exoPlayer.play()
 
-                radioName.text = name.substringBefore("-")
+                radioName.text = name.substringBefore("+")
                 if (!iconUrl.isNullOrEmpty()) {
                     Glide.with(this).load(iconUrl).into(radioIcon)
                 } else {
@@ -363,13 +509,13 @@ class MainActivity : AppCompatActivity() {
                 exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
                     override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                         log("Error: ${error.message}")
-                        radioName.text = "Error"
+                        radioName.setText(R.string.error)
                         radioIcon.setImageResource(android.R.drawable.ic_delete)
                     }
                 })
             } catch (e: Exception) {
                 log("Error: ${e.message}")
-                radioName.text = "Error"
+                radioName.setText(R.string.error)
                 radioIcon.setImageResource(android.R.drawable.ic_delete)
             }
         }
@@ -426,14 +572,23 @@ class MainActivity : AppCompatActivity() {
     private fun showContextMenudef(anchor: View, name: String, link: String,meta: JSONObject) {
         val iconUrl = meta.optString("favicon", null)
         val popup = PopupMenu(this, anchor)
+        val parentRow = anchor.parent as LinearLayout
         popup.menu.add("Play").setOnMenuItemClickListener {
             playStationDirect(name, iconUrl, link)
             true
         }
-        popup.menu.add("Delete").setOnMenuItemClickListener {
-            (anchor.parent as? LinearLayout)?.removeView(anchor)
-            removeDynamicStation(link)
-            true
+        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        val serversJson = prefs.getString("${name.substringBefore("-")}_servers", null)
+
+        /*
+        I have used common naming to find server list like "Vividh Bharati" and not "Vividh Bharati-1"
+        This can be changed by changing subsequencebefore from - to + for exact in serversjson in ServerChangeFragment.kt
+        */
+        if (serversJson!=null)
+            {
+            popup.menu.add("Change Server").setOnMenuItemClickListener {
+                showServerDialog(name,parentRow)
+            true}
         }
         popup.menu.add("Info").setOnMenuItemClickListener {
             showInfoDialog(meta)
@@ -442,7 +597,10 @@ class MainActivity : AppCompatActivity() {
         popup.show()
     }
 
-
+    fun showServerDialog(stationKey: String, parentRow: LinearLayout) {
+        val fragment = ServerChangeFragment(stationKey, parentRow)
+        fragment.show(supportFragmentManager, "ServerChangeFragment")
+    }
 
     private fun showInfoDialog(meta: JSONObject) {
         supportFragmentManager.commit {

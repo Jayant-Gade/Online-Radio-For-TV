@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:padding="16dp"
     android:layout_width="match_parent" android:layout_weight="0.7" android:layout_height="wrap_content"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:background="@drawable/border_background_info">
 
     <ImageView
         android:id="@+id/infoIcon"

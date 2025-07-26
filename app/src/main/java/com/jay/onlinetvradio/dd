@@ -1,7 +1,0 @@
-addStationButton("Radio City", "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA", row1)
-        addStationButton("Mirchi Love", "https://2.mystreaming.net/uber/lrbollywood/icecast.audio", row1)
-        addStationButton("Big FM", "https://listen.openstream.co/4434/audio", row1)
-        addStationButton("Red FM", "https://stream.zeno.fm/9phrkb1e3v8uv", row1)
-        addStationButton("Radio Mirchi", "https://eu8.fastcast4u.com/proxy/clyedupq/stream", row2)
-        addStationButton("Vividh Bharati-s1", "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", row2)
-        addStationButton("Vividh Bharati-s2", "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio026/hlspbaudio026_Auto.m3u8", row2)
