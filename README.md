@@ -78,7 +78,7 @@ This is a simple radio app which is designed to work on Android TVs using D-pad 
  <img src="images/direction.svg" width="32%" height="50" alt="D-Pad" />
  </td></tr>
   <tr><td width="700">
-<img src="images/product-1.jpg" width="700" alt="TV Screenshot" />
+<img src="images/product-1.jpg" alt="TV Screenshot" />
   </td></tr></table>
 </br>
 
@@ -89,7 +89,7 @@ This is a simple radio app which is designed to work on Android TVs using D-pad 
   <img src="images/touch-screen-phone.svg" width="50" height="50" alt="Touch" />
 </td></tr>
   <tr><td width="225">
-<img src="images/product-2.jpg" width="225" alt="Phone Screenshot" />
+<img src="images/product-2.jpg" alt="Phone Screenshot" />
   </td></tr></table>
 
 
@@ -144,7 +144,7 @@ Here are some usage examples done on an Android TV.
 * Navigation using D-Pad.
 * Click to play highlighted station.
 * Click same station again to pause playback.
-<img src="images/navigation.gif" width="700" alt="TV Naviation" />
+<img src="images/navigation.gif" alt="TV Naviation" />
   
 </td></tr>
   
@@ -153,7 +153,7 @@ Here are some usage examples done on an Android TV.
 ### <img align="left" src="images/search.svg" width="30" alt="Search" />  <ins>Search Public Stations online</ins>
 * Click on search to search for station name.
 * Click on station to add to Favorites/Recent section.
-<img src="images/search.gif" width="700" alt="TV Searching" />
+<img src="images/search.gif" alt="TV Searching" />
 </td></tr>
 
 <tr><td>
@@ -161,7 +161,7 @@ Here are some usage examples done on an Android TV.
 ### <img align="left" src="images/menu.svg" width="30" alt="Menu" />  <ins>Context Menu For Fav/Recent</ins>
 * Click and hold Fav/Recent stations to show context menu.
 * Can delete and show info while playing.
-<img src="images/saved-context.gif" width="700" alt="TV Context Menu" />
+<img src="images/saved-context.gif" alt="TV Context Menu" />
 
 </td></tr></table>
 
@@ -236,6 +236,7 @@ Resources used in Apps:
 
 Resources used for Readme:
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+* [SVGOMG](https://github.com/jakearchibald/svgomg)
 * [Img Shields](https://shields.io)
 * [SVG Repo](https://www.svgrepo.com/)
 * [md-badges](https://github.com/inttter/md-badges)
