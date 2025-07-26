@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:padding="4dp"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:background="@drawable/item_station_background"
-    android:focusable="true">
+    android:focusable="true"
+    android:background="@drawable/focus_button">
+    <View
+        android:id="@+id/stationButtonBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_background"
+        android:visibility="gone"
+        android:focusable="true"
+        android:radius="3dp"/>
 
-    <ImageView
-        android:id="@+id/stationIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:src="@mipmap/ic_launcher" />
-
-    <TextView
-        android:id="@+id/stationName"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Station Name"
-        android:textSize="14sp"
-        android:maxLines="2"
-        android:ellipsize="end"/>
-</LinearLayout>
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_rounded"
+        android:focusable="true"
+        android:radius="3dp">
 
+        <ImageView
+            android:id="@+id/stationIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@mipmap/ic_launcher"
+            android:radius="3dp"
+            android:padding="2dp"/>
+
+        <TextView
+            android:id="@+id/stationName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Station Name"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"/>
+    </LinearLayout>
+</FrameLayout>

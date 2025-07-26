@@ -14,6 +14,7 @@ import org.json.JSONObject
 import kotlin.concurrent.thread
 import android.net.Uri
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.media3.session.MediaSession
 import android.app.PendingIntent
 import android.content.Intent
@@ -23,7 +24,7 @@ import android.app.NotificationManager
 import android.util.Log
 import androidx.core.content.edit
 import kotlin.text.substringBefore
-
+import androidx.core.content.ContextCompat
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
     private val okHttpClient = OkHttpClient()
+    private var animatingView: View? = null
 
     private lateinit var row1: LinearLayout
     private lateinit var row2: LinearLayout
@@ -287,7 +289,19 @@ class MainActivity : AppCompatActivity() {
             if (apiServer == null) log("All servers failed")
         }
     }
+    private fun playButtonAnimation(view: View){
+        var glowView: View? = null
+        glowView = animatingView?.findViewById<View>(R.id.stationButtonBack)
+        glowView?.clearAnimation()
+        glowView?.visibility = View.INVISIBLE
+        val fadeAnim = AnimationUtils.loadAnimation(view.context, R.anim.fade_in_out)
+        glowView = view.findViewById<View>(R.id.stationButtonBack)
+        glowView.startAnimation(fadeAnim)
+        glowView.visibility = View.VISIBLE
+        animatingView = view
 
+
+    }
     private fun addStationButton(name: String, iconUrl: String?, link: String, parent: LinearLayout) {
 //      name-number(if same 2)+rownumber
         val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
@@ -323,9 +337,11 @@ class MainActivity : AppCompatActivity() {
             iconView.setImageResource(R.mipmap.ic_launcher)
         }
         view.setOnClickListener {
+            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack))
 
             val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
             val savedLink = prefs.getString("${name}_selected_link", null)
+
 
             // fallback order:
             // 1. saved link (from prefs)
@@ -337,7 +353,7 @@ class MainActivity : AppCompatActivity() {
             val finalLink = savedLink ?: link
             Log.d("MyApp", "Saved link: $savedLink, metaLink: unused, default: $link")
 
-            playStationDirect(name, iconUrl, finalLink)
+            playStationDirect(name.substringBefore("+").replace("-"," "), iconUrl, finalLink)
 
 
         }
@@ -398,7 +414,10 @@ class MainActivity : AppCompatActivity() {
             iconView.setImageResource(R.mipmap.ic_launcher)
         }
 
-        view.setOnClickListener { playStationDirect(name, iconUrl, link) }
+        view.setOnClickListener {
+            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack))
+            playStationDirect(name, iconUrl, link)
+        }
         view.setOnLongClickListener {
             showContextMenu(view, name, link, meta)
             true
@@ -475,7 +494,7 @@ class MainActivity : AppCompatActivity() {
         if (currentStreamName == name && exoPlayer.isPlaying) {
             // Same station clicked & already playing → pause
             exoPlayer.pause()
-
+            animatingView?.clearAnimation()
             log("Paused: ${name.substringBefore("+")}")
             return
         }
