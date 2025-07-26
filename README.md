@@ -171,9 +171,9 @@ Here are some usage examples done on an Android TV.
 
 ## <img align="left" src="images/roadmap-timeline.svg" width="30" alt="Roadmap" /> Roadmap
 
-- [ ] Add Menu to change Language/Location of Default radio stations (Like Vividh Bharati-s2).
-- [ ] Add more info when holding station in Fav/Recent.
-- [ ] Add context menu for Default Radio stations.
+- [x] Add Menu to change Language/Location of Default radio stations (Like Vividh Bharati-s2).
+- [x] Add more info when holding station in Fav/Recent.
+- [x] Add context menu for Default Radio stations.
 - [ ] Add settings for customisation.
 - [ ] Record button.
 - [ ] Display off button.
