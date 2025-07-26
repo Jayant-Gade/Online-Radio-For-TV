@@ -23,6 +23,7 @@ import android.content.Intent
 import androidx.media3.ui.PlayerNotificationManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.view.animation.AnimationUtils
 
 
 
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
-
+    @androidx.media3.common.util.UnstableApi
 
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
@@ -49,12 +50,13 @@ class MainActivity : AppCompatActivity() {
 
     private var currentStreamName: String? = null
 
-
+    private var vividhs1server: String = "_Hindi"
+    private var vividhs2server: String = "Maharashtra_Hindi"
 
     private lateinit var playbackStatusGif: ImageView
 
     var apiServer: String? = null
-
+    @androidx.media3.common.util.UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -114,16 +116,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Add fixed stations directly:
-        addStationButton("Radio City","https://www.radiocity.in/rc-new/images/RC-logonew.png", "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA", row1)
-        addStationButton("Mirchi Love","https://liveradios.in/wp-content/uploads/mirchilove-1.jpg", "https://2.mystreaming.net/uber/lrbollywood/icecast.audio", row1)
-        addStationButton("Big FM", "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png","https://listen.openstream.co/4434/audio", row1)
-        addStationButton("Red FM", "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content","https://stream.zeno.fm/9phrkb1e3v8uv", row1)
-        addStationButton("Fever 104 FM","https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg","https://radio.canstream.co.uk:8115/live.mp3",row1)
-        addStationButton("Radio Mirchi", "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg","https://eu8.fastcast4u.com/proxy/clyedupq/stream", row2)
-        addStationButton("Vividh Bharati-s1","https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg", "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", row2)
-        addStationButton("Vividh Bharati-s2", "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg","https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8", row2)
-        addStationButton("AIR FM Rainbow","https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",row2)
-        addStationButton("AIR FM Gold","https://onlineradiofm.in/assets/image/radio/180/fmgold.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",row2)
+        //addStationButton(name->"name-rownumber+servername_language",iconurl,streamurl,rownumber)
+        addStationButton("Radio City-r1+_","https://www.radiocity.in/rc-new/images/RC-logonew.png", "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA", row1)
+        addStationButton("Mirchi Love-r1+_","https://liveradios.in/wp-content/uploads/mirchilove-1.jpg", "https://2.mystreaming.net/uber/lrbollywood/icecast.audio", row1)
+        addStationButton("Big FM-r1+_", "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png","https://listen.openstream.co/4434/audio", row1)
+        addStationButton("Red FM-r1+_", "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content","https://stream.zeno.fm/9phrkb1e3v8uv", row1)
+        addStationButton("Fever 104 FM-r1+_","https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg","https://radio.canstream.co.uk:8115/live.mp3",row1)
+        addStationButton("Radio Mirchi-r2+_", "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg","https://eu8.fastcast4u.com/proxy/clyedupq/stream", row2)
+        addStationButton("Vividh Bharati-r2+_".replace("_", vividhs1server),"https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg", "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", row2)
+        addStationButton("Vividh Bharati-r2+_".replace("_", vividhs2server), "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg","https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8", row2)
+        addStationButton("AIR FM Rainbow-r2+_","https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",row2)
+        addStationButton("AIR FM Gold-r2+_","https://onlineradiofm.in/assets/image/radio/180/fmgold.webp","https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",row2)
 
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
@@ -144,14 +147,14 @@ class MainActivity : AppCompatActivity() {
         row_s.addView(searchButtonView, params)
 
         // Example: dynamically get BigFM
-        getStationByQuery("bigfm") { station ->
+        /*getStationByQuery("bigfm") { station ->
             station?.let {
                 val name = it.getString("name")
                 val link = it.getString("url_resolved")
                 val iconUrl = it.optString("favicon", null)
                 addStationButton(name, iconUrl, link, row1, it)
             }
-        }
+        }*/
         exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 updatePlaybackGif(isPlaying)
@@ -184,21 +187,39 @@ class MainActivity : AppCompatActivity() {
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
-    private fun addStationButton(name: String, iconUrl: String?, link: String, parent: LinearLayout, meta: JSONObject? = null) {
+    private fun addStationButton(name: String, iconUrl: String?, link: String, parent: LinearLayout) {
+//      name-rownumber+servername_language
+        val meta = JSONObject()
+        meta.put("name", name.substringBefore("-"))
+        meta.put("countrycode","India")
+        meta.put("tags","Indian Music")
+        meta.put("favicon",iconUrl)
+        if (name.substringAfter("_")==""){
+        meta.put("languagecodes","Hindi")}
+        else {
+            meta.put("languagecodes",name.substringAfter("_"))
+        }
+
+
         val view = layoutInflater.inflate(R.layout.item_station_button, parent, false)
         val nameText = view.findViewById<TextView>(R.id.stationName)
         val iconView = view.findViewById<ImageView>(R.id.stationIcon)
+        view.tag = meta
 
-        nameText.text = name
+
+        nameText.text = StringBuilder()
+            .append("${name.substringBefore("-")}\n")
+            .append("${name.substringAfter("+").substringBefore("_")}")
+            .toString()
+
         if (!iconUrl.isNullOrEmpty()) {
             Glide.with(this).load(iconUrl).into(iconView)
         } else {
             iconView.setImageResource(R.mipmap.ic_launcher)
         }
-
         view.setOnClickListener { playStationDirect(name, iconUrl, link) }
         view.setOnLongClickListener {
-            meta?.let { showContextMenu(view, name, link, meta) }
+            showContextMenudef(view, name, link, meta)
             true
         }
 
@@ -310,11 +331,11 @@ class MainActivity : AppCompatActivity() {
             // Same station clicked & already playing → pause
             exoPlayer.pause()
 
-            log("Paused: $name")
+            log("Paused: ${name.substringBefore("-")}")
             return
         }
         else {
-            log("Playing: $name")
+            log("Playing: ${name.substringBefore("-")}")
             try {
                 exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
                 exoPlayer.setMediaItem(
@@ -322,7 +343,7 @@ class MainActivity : AppCompatActivity() {
                         .setUri(streamUrl)
                         .setMediaMetadata(
                             androidx.media3.common.MediaMetadata.Builder()
-                                .setTitle(name)
+                                .setTitle(name.substringBefore("-"))
                                 .setArtworkUri(iconUrl?.let { Uri.parse(it) })
                                 .build()
                         )
@@ -332,7 +353,7 @@ class MainActivity : AppCompatActivity() {
                 exoPlayer.prepare()
                 exoPlayer.play()
 
-                radioName.text = name
+                radioName.text = name.substringBefore("-")
                 if (!iconUrl.isNullOrEmpty()) {
                     Glide.with(this).load(iconUrl).into(radioIcon)
                 } else {
@@ -402,6 +423,24 @@ class MainActivity : AppCompatActivity() {
         }
         popup.show()
     }
+    private fun showContextMenudef(anchor: View, name: String, link: String,meta: JSONObject) {
+        val iconUrl = meta.optString("favicon", null)
+        val popup = PopupMenu(this, anchor)
+        popup.menu.add("Play").setOnMenuItemClickListener {
+            playStationDirect(name, iconUrl, link)
+            true
+        }
+        popup.menu.add("Delete").setOnMenuItemClickListener {
+            (anchor.parent as? LinearLayout)?.removeView(anchor)
+            removeDynamicStation(link)
+            true
+        }
+        popup.menu.add("Info").setOnMenuItemClickListener {
+            showInfoDialog(meta)
+            true
+        }
+        popup.show()
+    }
 
 
 
@@ -421,7 +460,7 @@ class MainActivity : AppCompatActivity() {
         val gifRes = if (isPlaying) R.drawable.playing else R.drawable.not_playing
         Glide.with(this).asGif().load(gifRes).into(playbackStatusGif)
     }
-
+    @androidx.media3.common.util.UnstableApi
     override fun onDestroy() {
         super.onDestroy()
         playerNotificationManager.setPlayer(null)

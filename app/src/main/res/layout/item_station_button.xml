@@ -23,7 +23,7 @@
         android:layout_weight="1"
         android:text="Station Name"
         android:textSize="14sp"
-        android:maxLines="1"
+        android:maxLines="2"
         android:ellipsize="end"/>
 </LinearLayout>
 

@@ -20,13 +20,14 @@ class InfoDialogFragment(private val station: JSONObject) : DialogFragment() {
 
         val favicon = station.optString("favicon")
         if (favicon.isNotEmpty()) Glide.with(this).load(favicon).into(icon)
-        text.text = """
-            Name: ${station.optString("name")}
-            Country: ${station.optString("country")}
-            Tags: ${station.optString("tags")}
-            Language: ${station.optString("language")}
-        """.trimIndent()
+        val infoText = StringBuilder()
+            .append("Name: ${station.optString("name")}\n")
+            .append("Country: ${station.optString("countrycode")}\n")
+            .append("Tags: ${station.optString("tags")}\n")
+            .append("Language: ${station.optString("languagecodes")}")
+            .toString()
 
+        text.text = infoText
         return dialog
     }
 
