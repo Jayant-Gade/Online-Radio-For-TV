@@ -4,7 +4,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="focus_custom">#9983AAFF</color>
-    <color name="nofocus_custom">#2BFF0000</color>
+    <color name="nofocus_custom">#2B6B6B6B</color>
 
 
 </resources>

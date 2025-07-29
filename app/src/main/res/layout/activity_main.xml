@@ -108,10 +108,11 @@
 
             <ImageView
                 android:id="@+id/radioIcon"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="98dp"
+                android:layout_height="98dp"
                 android:src="@mipmap/ic_launcher"
-                android:scaleType="centerInside" />
+                android:scaleType="centerInside"
+                android:padding="2dp"/>
 
             <TextView
                 android:id="@+id/radioName"
