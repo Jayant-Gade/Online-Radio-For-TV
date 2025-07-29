@@ -178,7 +178,7 @@ Here are some usage examples done on an Android TV.
 - [ ] Record button.
 - [ ] Display off button.
 - [ ] Add animations like
-  - [ ] Loading Animation over clicked station.
+  - [x] Loading Animation over clicked station.
   - [ ] Clicking animation on stations.
   - [ ] Popping out info panel Animation.
 
@@ -229,12 +229,9 @@ Project Link: [https://github.com/Jayant-Gade/Online-Radio-For-TV](https://githu
 
 <!-- ACKNOWLEDGMENTS -->
 ## :star2: Acknowledgments
-Resources used in Apps:
+
 
 * [Radio Browser API](https://www.radio-browser.info/)
-
-
-Resources used for Readme:
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 * [SVGOMG](https://github.com/jakearchibald/svgomg)
 * [Img Shields](https://shields.io)
