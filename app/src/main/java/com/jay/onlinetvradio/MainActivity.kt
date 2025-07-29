@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity() {
 
 
         searchText.setText(R.string.search)
-        searchIcon.setImageResource(android.R.drawable.ic_menu_search) // or your custom icon
+        searchIcon.setImageResource(R.drawable.search_icon) // or your custom icon
 
         searchButtonView.setOnClickListener { openSearchDialog() }
         val params = LinearLayout.LayoutParams(
