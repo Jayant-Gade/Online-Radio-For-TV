@@ -2,7 +2,9 @@ package com.jay.onlinetvradio
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.*
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -13,7 +15,6 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.concurrent.thread
-import android.widget.Button
 
 
 class SearchDialogFragment(private val onSelect: (station: JSONObject) -> Unit) : DialogFragment() {
@@ -37,7 +38,7 @@ class SearchDialogFragment(private val onSelect: (station: JSONObject) -> Unit) 
         }
         val window = dialog.window
         window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.5).toInt(),
+            (resources.displayMetrics.widthPixels * 0.9).toInt(),
             WindowManager.LayoutParams.WRAP_CONTENT
         )
 

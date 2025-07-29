@@ -162,9 +162,9 @@ class MainActivity : AppCompatActivity() {
         // Add fixed stations directly:
         //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
         addStationButton(
-            "Radio City-+r1",
-            "https://www.radiocity.in/rc-new/images/RC-logonew.png",
-            "https://stream-60.zeno.fm/pxc55r5uyc9uv?zs=xkD7f1ttQe20opARKqWXuA",
+            "Radio City Freedom-+r1",
+            "https://onlineradiofm.in/assets/image/radio/180/PlanetRadioCity-Freedom.png",
+            "https://stream-140.zeno.fm/d6f5w51zrf9uv",
             row1
         )
         addStationButton(
@@ -528,6 +528,7 @@ class MainActivity : AppCompatActivity() {
                 exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
                     override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                         log("Error: ${error.message}")
+                        animatingView?.clearAnimation()
                         radioName.setText(R.string.error)
                         radioIcon.setImageResource(android.R.drawable.ic_delete)
                     }

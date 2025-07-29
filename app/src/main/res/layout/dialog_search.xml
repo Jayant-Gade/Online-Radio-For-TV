@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
-            android:hint="Search stations" />
+            android:hint="@string/search_station_placeholder" />
 
         <Button
             android:id="@+id/searchButton"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#757575"
             android:focusable="true"
-            android:text="Go" />
+            android:text="@string/search" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"
