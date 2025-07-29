@@ -47,4 +47,5 @@ proguard-rules.pro
 
 # Android NDK
 ndkBuild/
-local.properties
+/.idea/
+/.kotlin/
