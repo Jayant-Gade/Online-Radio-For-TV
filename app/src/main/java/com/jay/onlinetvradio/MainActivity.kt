@@ -575,6 +575,7 @@ class MainActivity : AppCompatActivity() {
         val iconUrl = meta.optString("favicon", null)
         val popup = PopupMenu(this, anchor)
         popup.menu.add("Play").setOnMenuItemClickListener {
+            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack))
             playStationDirect(name, iconUrl, link)
             true
         }
@@ -594,7 +595,8 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, anchor)
         val parentRow = anchor.parent as LinearLayout
         popup.menu.add("Play").setOnMenuItemClickListener {
-            playStationDirect(name, iconUrl, link)
+            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack))
+            playStationDirect(name.substringBefore("+").replace("-"," "), iconUrl, link)
             true
         }
         val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
