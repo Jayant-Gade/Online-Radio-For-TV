@@ -36,7 +36,7 @@
   </p>
 </div>
 
-
+<h3 align="center">Note:- This app is going to get big UI change.</h3>
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
