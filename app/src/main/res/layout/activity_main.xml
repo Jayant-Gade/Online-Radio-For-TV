@@ -138,7 +138,7 @@
                         android:id="@+id/qualityInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:maxLines="2"
                         android:gravity="center"
                         android:textColor="#00E6FF"
                         android:text="Quality Info"
