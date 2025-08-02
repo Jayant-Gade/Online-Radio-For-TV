@@ -1,4 +1,9 @@
 <resources>
     <dimen name="border_margin">0dp</dimen>
     <dimen name="border_height">0.5dp</dimen>
+    <dimen name="station_button_height">46dp</dimen>
+    <dimen name="station_button_row_height">49dp</dimen>
+    <dimen name="station_button_icon_height">43dp</dimen>
+    <dimen name="station_row_padding_bottom">3dp</dimen>
+    <dimen name="station_button_icon_padding">3dp</dimen>
 </resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <SwitchPreferenceCompat
+        android:key="enable_http"
+        android:title="Enable HTTP Traffic for Exoplayer"
+        android:summary="Allow ExoPlayer to load HTTP URLs"
+        android:defaultValue="false" />
+    <SwitchPreferenceCompat
+        android:key="enable_http_other"
+        android:title="Enable HTTP Traffic for other resources"
+        android:summary="Allow other resources to be able to get loaded by HTTP URLs"
+        android:defaultValue="false" />
+
+</PreferenceScreen>

@@ -26,7 +26,6 @@ class StationAdapter(private val onSelect: (station: JSONObject) -> Unit) :
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_station, parent, false)
         view.isFocusable = true
-        view.isFocusableInTouchMode = true
         return ViewHolder(view)
     }
 

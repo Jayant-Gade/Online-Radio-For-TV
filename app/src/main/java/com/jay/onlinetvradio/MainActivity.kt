@@ -25,26 +25,50 @@ import android.util.Log
 import androidx.core.content.edit
 import kotlin.text.substringBefore
 import androidx.core.content.ContextCompat
+import androidx.media3.common.Format
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.common.Tracks
+import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
+import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
+import androidx.media3.common.MimeTypes
+import android.content.Context
+import android.media.AudioManager
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.preference.PreferenceManager
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var radioName: TextView
+    private lateinit var qualityInfo: TextView
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
 
     @androidx.media3.common.util.UnstableApi
 
-
     private lateinit var playerNotificationManager: PlayerNotificationManager
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            val enableHttp = prefs.getBoolean("enable_http_other", false)
+            val url = chain.request().url
+            if (!enableHttp && url.scheme.equals("http", ignoreCase = true)) {
+                throw IOException("HTTP traffic disabled by user")
+            }
+            chain.proceed(chain.request())
+        }
+        .build()
     private var animatingView: View? = null
 
     private lateinit var row1: LinearLayout
     private lateinit var row2: LinearLayout
 
+    private lateinit var parentContainer: LinearLayout
     private lateinit var row_s: LinearLayout
     private val dynamicRows = mutableListOf<LinearLayout>()
 
@@ -59,25 +83,44 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        //val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
 
         playbackStatusGif = findViewById(R.id.playbackStatusGif)
 
         radioName = findViewById(R.id.radioName)
+        qualityInfo = findViewById(R.id.qualityInfo)
         logText = findViewById(R.id.logText)
         radioIcon = findViewById(R.id.radioIcon)
 
         row1 = findViewById(R.id.row1)
         row2 = findViewById(R.id.row2)
         row_s = findViewById(R.id.row_s)
-        dynamicRows.add(findViewById(R.id.row3))
-        dynamicRows.add(findViewById(R.id.row4))
-        dynamicRows.add(findViewById(R.id.row5))
-        dynamicRows.add(findViewById(R.id.row6))
+
+        parentContainer = findViewById(R.id.parentContainer)
+        addNewRow()
         loadDynamicStations()
 
-        exoPlayer = ExoPlayer.Builder(this).build()
+        // Hide the status bar.
+        //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        //the action bar is hidden
+        //actionBar?.hide()
+
+        val defaultFactory = DefaultHttpDataSource.Factory()
+        val dataSourceFactory = SafeHttpDataSourceFactory(
+            context = this,
+            defaultFactory,
+            onHttpBlocked = {
+                runOnUiThread {
+                    qualityInfo.text = "HTTP playback blocked by settings"
+                }
+            })
+
+        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+        exoPlayer = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
+            .build()
 
         val sessionActivityPendingIntent = PendingIntent.getActivity(
             this, 0, Intent(this, MainActivity::class.java),
@@ -127,11 +170,13 @@ class MainActivity : AppCompatActivity() {
                     "Marathi",
                     "Nagpur"
                 ),
-                Triple("https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio238/hlspbaudio238_Auto.m3u8",
+                Triple(
+                    "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio238/hlspbaudio238_Auto.m3u8",
                     "Hindi",
                     "Delhi"
                 ),
-                Triple("\thttps://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio011/hlspbaudio011_Auto.m3u8",
+                Triple(
+                    "\thttps://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio011/hlspbaudio011_Auto.m3u8",
                     "Marathi",
                     "Mumbai"
                 )
@@ -224,14 +269,29 @@ class MainActivity : AppCompatActivity() {
         //Log.d("MyApp","helloooo")
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
+        val settingButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
         val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
         val searchIcon = searchButtonView.findViewById<ImageView>(R.id.stationIcon)
+        val settingText = settingButtonView.findViewById<TextView>(R.id.stationName)
+        val settingIcon = settingButtonView.findViewById<ImageView>(R.id.stationIcon)
 
-
+        val paramssearch = searchButtonView.layoutParams
+        val scale = searchButtonView.context.resources.displayMetrics.density
+        paramssearch.width = (400 * scale + 0.5f).toInt() // 200dp
+        paramssearch.height = (100 * scale + 0.5f).toInt() // 100dp
+        searchButtonView.layoutParams = paramssearch
         searchText.setText(R.string.search)
         searchIcon.setImageResource(R.drawable.search_icon) // or your custom icon
-
         searchButtonView.setOnClickListener { openSearchDialog() }
+        val settingsDialog = SettingsDialogFragment()
+
+        settingText.text = "Setting"
+        settingIcon.setImageResource(android.R.drawable.ic_menu_preferences)
+        settingButtonView.setOnClickListener {
+            settingsDialog.show(supportFragmentManager, "settings")
+
+        }
+
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -240,6 +300,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         row_s.addView(searchButtonView, params)
+        row_s.addView(settingButtonView,params)
 
         // Example: dynamically get BigFM
         /*getStationByQuery("bigfm") { station ->
@@ -254,8 +315,47 @@ class MainActivity : AppCompatActivity() {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 updatePlaybackGif(isPlaying)
             }
+
         })
 
+
+        exoPlayer.addAnalyticsListener(object : AnalyticsListener {
+            override fun onAudioInputFormatChanged(
+                eventTime: AnalyticsListener.EventTime,
+                format: Format
+            ) {
+                qualityInfo.text=""
+                qualityInfo.append("Codec:${format.sampleMimeType?.substringBefore("-")?.substringAfter("/")} | ")
+                qualityInfo.append("Bitrate:${format.bitrate / 1000}kbps | ")
+                if (format.channelCount==1) {
+                    qualityInfo.append("Channels:${format.channelCount} (Mono)")
+                }
+                else if (format.channelCount==2) {
+                    qualityInfo.append("Channels:${format.channelCount} (Stereo)")
+                }
+                else {
+                    qualityInfo.append("Channels:${format.channelCount}")
+                }//debug area
+                Log.d("ExoPlayer", "Audio bitrate: ${format.bitrate / 1000} kbps")
+                Log.d("ExoPlayer", "Codec: ${format.sampleMimeType}")
+                Log.d("ExoPlayer", "Channels: ${format.channelCount}")
+            }
+        })
+
+    }
+
+    private fun addNewRow() {
+        val newRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 8, 0, 8) // optional margins between rows
+            }
+        }
+        dynamicRows.add(newRow)
+        parentContainer.addView(newRow)
     }
 
     fun updateStationStateAndLanguageInPrefs(
@@ -268,28 +368,36 @@ class MainActivity : AppCompatActivity() {
             putString("${exactStationName}_selected_language", language)
             putString("${exactStationName}_selected_state", state)
         }
-    Log.d("FirstRun",
-    "Saved for $exactStationName: state=$state, language=$language")
-}
+        Log.d(
+            "FirstRun",
+            "Saved for $exactStationName: state=$state, language=$language"
+        )
+    }
+
     private fun initApiServer() {
-        val servers = listOf("de1.api.radio-browser.info", "fi1.api.radio-browser.info",
-            "fr1.api.radio-browser.info", "nl1.api.radio-browser.info")
+        val servers = listOf(
+            "de1.api.radio-browser.info", "fi1.api.radio-browser.info",
+            "fr1.api.radio-browser.info", "nl1.api.radio-browser.info"
+        )
         thread {
             for (server in servers) {
                 try {
                     val url = "https://$server/json/stats"
-                    val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
+                    val response =
+                        okHttpClient.newCall(Request.Builder().url(url).build()).execute()
                     if (response.isSuccessful) {
                         apiServer = server
                         log("Using API: $server")
                         break
                     }
-                } catch (_: Exception) { }
+                } catch (_: Exception) {
+                }
             }
             if (apiServer == null) log("All servers failed")
         }
     }
-    private fun playButtonAnimation(view: View){
+
+    private fun playButtonAnimation(view: View) {
         var glowView: View? = null
         glowView = animatingView?.findViewById<View>(R.id.stationButtonBack)
         glowView?.clearAnimation()
@@ -302,19 +410,25 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    private fun addStationButton(name: String, iconUrl: String?, link: String, parent: LinearLayout) {
+
+    private fun addStationButton(
+        name: String,
+        iconUrl: String?,
+        link: String,
+        parent: LinearLayout
+    ) {
 //      name-number(if same 2)+rownumber
         val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
         val meta = JSONObject()
         meta.put("name", name.substringBefore("+"))
-        meta.put("countrycode","India")
-        meta.put("tags","Indian Music")
-        meta.put("favicon",iconUrl)
+        meta.put("countrycode", "India")
+        meta.put("tags", "Indian Music")
+        meta.put("favicon", iconUrl)
         val savedLanguage = prefs.getString("${name}_selected_language", null)
-        if (savedLanguage==null){
-        meta.put("languagecodes","Hindi")}
-        else {
-            meta.put("languagecodes",savedLanguage)
+        if (savedLanguage == null) {
+            meta.put("languagecodes", "Hindi")
+        } else {
+            meta.put("languagecodes", savedLanguage)
         }
 
 
@@ -323,9 +437,9 @@ class MainActivity : AppCompatActivity() {
         val iconView = view.findViewById<ImageView>(R.id.stationIcon)
         view.tag = meta
 
-        val selectedState=prefs.getString("${name}_selected_state", null)
+        val selectedState = prefs.getString("${name}_selected_state", null)
         nameText.text = buildString {
-            append(name.substringBefore("+").replace("-"," "))
+            append(name.substringBefore("+").replace("-", " "))
             if (!selectedState.isNullOrEmpty()) {
                 append("\n$selectedState")
             }
@@ -353,7 +467,7 @@ class MainActivity : AppCompatActivity() {
             val finalLink = savedLink ?: link
             Log.d("MyApp", "Saved link: $savedLink, metaLink: unused, default: $link")
 
-            playStationDirect(name.substringBefore("+").replace("-"," "), iconUrl, finalLink)
+            playStationDirect(name.substringBefore("+").replace("-", " "), iconUrl, finalLink)
 
 
         }
@@ -362,11 +476,13 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-            marginStart = 4; marginEnd = 4
-        }
+        val params =
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = 4; marginEnd = 4
+            }
         runOnUiThread { parent.addView(view, params) }
     }
+
     private fun saveServerList(
         stationKey: String,
         servers: List<Triple<String, String, String>> // Pair<url, language>
@@ -388,8 +504,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    private fun addDynamicStation(name: String, iconUrl: String?, link: String, meta: JSONObject, skipDuplicateCheck: Boolean = false) {
+    private fun addDynamicStation(
+        name: String,
+        iconUrl: String?,
+        link: String,
+        meta: JSONObject,
+        skipDuplicateCheck: Boolean = false
+    ) {
         if (!skipDuplicateCheck) {
             val prefs = getSharedPreferences("dynamic_stations", MODE_PRIVATE)
             val arr = JSONArray(prefs.getString("stations", "[]"))
@@ -422,24 +543,29 @@ class MainActivity : AppCompatActivity() {
             showContextMenu(view, name, link, meta)
             true
         }
-
-        val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-            marginStart = 4; marginEnd = 4
-        }
-
+        val params =
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = 4; marginEnd = 4
+            }
+        /*
         for (row in dynamicRows) {
             if (row.childCount < 3) {
                 runOnUiThread { row.addView(view, params) }
                 break
             }
+        }*/
+        for (row in dynamicRows) {
+            if (row.childCount < 3) {
+                runOnUiThread { row.addView(view, params) }
+                return
+            }
         }
-
+        addNewRow()
+        runOnUiThread { dynamicRows.last().addView(view, params) }
         if (!skipDuplicateCheck) {
             saveDynamicStation(name, iconUrl, link, meta)
         }
     }
-
-
 
 
     private fun saveDynamicStation(name: String, iconUrl: String?, link: String, meta: JSONObject) {
@@ -497,8 +623,12 @@ class MainActivity : AppCompatActivity() {
             animatingView?.clearAnimation()
             log("Paused: ${name.substringBefore("+")}")
             return
-        }
-        else {
+        } else {
+            //debug area
+            //logAvailableDecoders()
+
+            //debug end
+            qualityInfo.text="Loading..."
             log("Playing: ${name.substringBefore("+")}")
             try {
                 exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
@@ -513,7 +643,7 @@ class MainActivity : AppCompatActivity() {
                         )
                         .build()
                 )
-                Log.d("MyApp","playing $streamUrl")
+                Log.d("MyApp", "playing $streamUrl")
                 currentStreamName = name
                 exoPlayer.prepare()
                 exoPlayer.play()
@@ -546,16 +676,21 @@ class MainActivity : AppCompatActivity() {
         thread {
             try {
                 val server = apiServer ?: return@thread
-                val url = "https://$server/json/stations/search?limit=30&name=$query&hidebroken=true&order=clickcount&reverse=true"
+                val url =
+                    "https://$server/json/stations/search?limit=30&name=$query&hidebroken=true&order=clickcount&reverse=true"
                 val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
                 val body = response.body?.string()
                 if (!response.isSuccessful || body.isNullOrEmpty()) {
                     callback(null); return@thread
                 }
                 val arr = JSONArray(body)
-                if (arr.length() == 0) { callback(null); return@thread }
+                if (arr.length() == 0) {
+                    callback(null); return@thread
+                }
                 callback(arr.getJSONObject(0))
-            } catch (e: Exception) { log("Error: ${e.message}"); callback(null) }
+            } catch (e: Exception) {
+                log("Error: ${e.message}"); callback(null)
+            }
         }
     }
 
@@ -590,13 +725,14 @@ class MainActivity : AppCompatActivity() {
         }
         popup.show()
     }
-    private fun showContextMenudef(anchor: View, name: String, link: String,meta: JSONObject) {
+
+    private fun showContextMenudef(anchor: View, name: String, link: String, meta: JSONObject) {
         val iconUrl = meta.optString("favicon", null)
         val popup = PopupMenu(this, anchor)
         val parentRow = anchor.parent as LinearLayout
         popup.menu.add("Play").setOnMenuItemClickListener {
             playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack))
-            playStationDirect(name.substringBefore("+").replace("-"," "), iconUrl, link)
+            playStationDirect(name.substringBefore("+").replace("-", " "), iconUrl, link)
             true
         }
         val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
@@ -606,11 +742,11 @@ class MainActivity : AppCompatActivity() {
         I have used common naming to find server list like "Vividh Bharati" and not "Vividh Bharati-1"
         This can be changed by changing subsequencebefore from - to + for exact in serversjson in ServerChangeFragment.kt
         */
-        if (serversJson!=null)
-            {
+        if (serversJson != null) {
             popup.menu.add("Change Server").setOnMenuItemClickListener {
-                showServerDialog(name,parentRow)
-            true}
+                showServerDialog(name, parentRow)
+                true
+            }
         }
         popup.menu.add("Info").setOnMenuItemClickListener {
             showInfoDialog(meta)
@@ -640,11 +776,42 @@ class MainActivity : AppCompatActivity() {
         val gifRes = if (isPlaying) R.drawable.playing else R.drawable.not_playing
         Glide.with(this).asGif().load(gifRes).into(playbackStatusGif)
     }
+
     @androidx.media3.common.util.UnstableApi
     override fun onDestroy() {
         super.onDestroy()
         playerNotificationManager.setPlayer(null)
         mediaSession.release()
         exoPlayer.release()
+    }
+
+
+    @UnstableApi
+    fun logAvailableDecoders() {
+        val mimeTypesToCheck = listOf(
+            MimeTypes.AUDIO_E_AC3_JOC, // Dolby Atmos over DD+
+            MimeTypes.AUDIO_E_AC3,     // Dolby Digital Plus
+            MimeTypes.AUDIO_AC3,       // Dolby Digital
+            MimeTypes.AUDIO_AAC,       // AAC (LC)
+            MimeTypes.AUDIO_MPEG       // MP3
+        )
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+
+        for (device in devices) {
+            Log.d("Audio", "Device: ${device.productName}, type=${device.type}, channels=${device.channelCounts.joinToString()}")
+        }
+
+        for (mime in mimeTypesToCheck) {
+            try {
+                val decoderInfos: List<MediaCodecInfo> = MediaCodecUtil.getDecoderInfos(mime, /* secure= */ false, /* tunneling= */ false)
+                Log.d("ExoPlayer", "MimeType: $mime, decoders found: ${decoderInfos.size}")
+                decoderInfos.forEach { decoderInfo ->
+                    Log.d("ExoPlayer", "  decoder name=${decoderInfo.name}, hardwareAccelerated=${decoderInfo.hardwareAccelerated}")
+                }
+            } catch (e: Exception) {
+                Log.w("ExoPlayer", "Error checking decoders for mimeType=$mime", e)
+            }
+        }
     }
 }

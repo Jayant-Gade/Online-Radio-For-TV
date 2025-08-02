@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/station_button_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
-    android:background="@drawable/focus_button">
+    android:background="@drawable/focus_button"
+    android:clipToOutline="true">
     <View
         android:id="@+id/stationButtonBack"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/station_button_row_height"
         android:background="@drawable/gradient_background"
         android:visibility="gone"
         android:focusable="true"
@@ -20,16 +22,16 @@
         android:gravity="center_vertical"
         android:background="@drawable/bg_rounded"
         android:focusable="true"
+        android:padding="@dimen/station_button_icon_padding"
         android:radius="3dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/stationIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="@dimen/station_button_icon_height"
+            android:layout_height="@dimen/station_button_icon_height"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_launcher"
-            android:radius="3dp"
-            android:padding="2dp"/>
+            app:shapeAppearance="@style/RoundedImageStyle"/>
 
         <TextView
             android:id="@+id/stationName"
@@ -37,9 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Station Name"
-            android:textSize="14sp"
+            android:textAlignment="center"
+            android:textSize="12sp"
             android:maxLines="2"
-            android:layout_marginEnd="8dp"
+            android:layout_marginHorizontal="3dp"
             android:ellipsize="end"/>
     </LinearLayout>
 </FrameLayout>

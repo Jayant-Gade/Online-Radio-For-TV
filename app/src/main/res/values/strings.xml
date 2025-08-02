@@ -3,4 +3,5 @@
     <string name="error">Error Occurred</string>
     <string name="search_station_placeholder">Enter Station Name</string>
     <string name="search">Search</string>
+    <string name="default_station_heading">Indian Radio Stations</string>
 </resources>
