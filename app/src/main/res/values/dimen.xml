@@ -6,4 +6,5 @@
     <dimen name="station_button_icon_height">43dp</dimen>
     <dimen name="station_row_padding_bottom">3dp</dimen>
     <dimen name="station_button_icon_padding">3dp</dimen>
+    <dimen name="search_bar_radius">24dp</dimen>
 </resources>

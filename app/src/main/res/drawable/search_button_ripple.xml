@@ -1,0 +1,5 @@
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#005978">
+
+    <item android:drawable="@drawable/search_button_background"/>
+</ripple>

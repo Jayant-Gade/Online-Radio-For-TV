@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:paddingTop="6dp"
+    android:paddingHorizontal="6dp"
     android:layout_width="match_parent"
     android:background="@drawable/border_background"
     android:layout_height="wrap_content">
@@ -9,30 +10,32 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/searchInput"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_button_ripple">
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:hint="@string/search_station_placeholder" />
+            android:layout_height="wrap_content"
+            android:paddingEnd="5dp"
+            android:paddingStart="10dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:id="@+id/searchInput"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:hint="@string/search_station_placeholder"  />
+        </LinearLayout>
 
         <Button
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#757575"
+            android:background="@drawable/search_button_ripple"
             android:focusable="true"
+            android:clickable="true"
+            android:padding="1dp"
             android:text="@string/search" />
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/border_height"
-        android:background="#CCCCCC"
-        android:layout_marginTop="@dimen/border_margin"
-        android:layout_marginBottom="@dimen/border_margin"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

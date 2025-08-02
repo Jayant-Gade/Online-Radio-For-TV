@@ -24,20 +24,20 @@ import android.app.NotificationManager
 import android.util.Log
 import androidx.core.content.edit
 import kotlin.text.substringBefore
-import androidx.core.content.ContextCompat
 import androidx.media3.common.Format
 import androidx.media3.exoplayer.analytics.AnalyticsListener
-import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.common.MimeTypes
 import android.content.Context
 import android.media.AudioManager
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.preference.PreferenceManager
 import java.io.IOException
+import androidx.core.net.toUri
 
 
 class MainActivity : AppCompatActivity() {
@@ -112,9 +112,7 @@ class MainActivity : AppCompatActivity() {
             context = this,
             defaultFactory,
             onHttpBlocked = {
-                runOnUiThread {
-                    qualityInfo.text = "HTTP playback blocked by settings"
-                }
+                //runOnUiThread {                }
             })
 
         val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
@@ -268,40 +266,40 @@ class MainActivity : AppCompatActivity() {
         )
         //Log.d("MyApp","helloooo")
         // Add search button in row_s
-        val searchButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
-        val settingButtonView = layoutInflater.inflate(R.layout.item_station_button, row_s, false)
-        val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
-        val searchIcon = searchButtonView.findViewById<ImageView>(R.id.stationIcon)
-        val settingText = settingButtonView.findViewById<TextView>(R.id.stationName)
-        val settingIcon = settingButtonView.findViewById<ImageView>(R.id.stationIcon)
+        val searchButtonView = layoutInflater.inflate(R.layout.item_search_button, row_s, false)
+        val settingButtonView = layoutInflater.inflate(R.layout.item_setting_button, row_s, false)
+        //val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
+        //val searchIcon = searchButtonView.findViewById<ImageView>(R.id.stationIcon)
+        //val settingText = settingButtonView.findViewById<TextView>(R.id.stationName)
+        //val settingIcon = settingButtonView.findViewById<ImageView>(R.id.stationIcon)
 
-        val paramssearch = searchButtonView.layoutParams
-        val scale = searchButtonView.context.resources.displayMetrics.density
-        paramssearch.width = (400 * scale + 0.5f).toInt() // 200dp
-        paramssearch.height = (100 * scale + 0.5f).toInt() // 100dp
-        searchButtonView.layoutParams = paramssearch
-        searchText.setText(R.string.search)
-        searchIcon.setImageResource(R.drawable.search_icon) // or your custom icon
+
         searchButtonView.setOnClickListener { openSearchDialog() }
         val settingsDialog = SettingsDialogFragment()
 
-        settingText.text = "Setting"
-        settingIcon.setImageResource(android.R.drawable.ic_menu_preferences)
+        //settingText.text = "Setting"
+        //settingIcon.setImageResource(android.R.drawable.ic_menu_preferences)
         settingButtonView.setOnClickListener {
             settingsDialog.show(supportFragmentManager, "settings")
 
         }
 
-        val params = LinearLayout.LayoutParams(
+        val param_setting = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = android.view.Gravity.CENTER
         }
+        val param_search = LinearLayout.LayoutParams(
+            0,
+            LinearLayout.LayoutParams.WRAP_CONTENT ,
+                    0.25f
+        ).apply {
+            gravity = android.view.Gravity.CENTER
+        }
 
-        row_s.addView(searchButtonView, params)
-        row_s.addView(settingButtonView,params)
-
+        row_s.addView(searchButtonView,param_search)
+        row_s.addView(settingButtonView,param_setting)
         // Example: dynamically get BigFM
         /*getStationByQuery("bigfm") { station ->
             station?.let {
@@ -402,7 +400,7 @@ class MainActivity : AppCompatActivity() {
         glowView = animatingView?.findViewById<View>(R.id.stationButtonBack)
         glowView?.clearAnimation()
         glowView?.visibility = View.INVISIBLE
-        val fadeAnim = AnimationUtils.loadAnimation(view.context, R.anim.fade_in_out)
+        val fadeAnim = AnimationUtils.loadAnimation(view.context, R.anim.gradient_motion)
         glowView = view.findViewById<View>(R.id.stationButtonBack)
         glowView.startAnimation(fadeAnim)
         glowView.visibility = View.VISIBLE
@@ -629,7 +627,7 @@ class MainActivity : AppCompatActivity() {
 
             //debug end
             qualityInfo.text="Loading..."
-            log("Playing: ${name.substringBefore("+")}")
+
             try {
                 exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
                 exoPlayer.setMediaItem(
@@ -645,16 +643,32 @@ class MainActivity : AppCompatActivity() {
                 )
                 Log.d("MyApp", "playing $streamUrl")
                 currentStreamName = name
-                exoPlayer.prepare()
-                exoPlayer.play()
-
+                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+                val http_on = prefs.getBoolean("enable_http", false)
                 radioName.text = name.substringBefore("+")
                 if (!iconUrl.isNullOrEmpty()) {
                     Glide.with(this).load(iconUrl).into(radioIcon)
                 } else {
                     radioIcon.setImageResource(R.mipmap.ic_launcher)
                 }
-
+                val connectiontype = streamUrl?.toUri()?.scheme?.lowercase()
+                if (connectiontype=="http"){
+                    if (http_on) {
+                        log("Playing: ${name.substringBefore("+")}")
+                        exoPlayer.prepare()
+                        exoPlayer.play()
+                    }
+                    else {
+                        qualityInfo.text = "HTTP playback blocked by settings"
+                        log("HTTP playback blocked by settings")
+                        animatingView?.clearAnimation()
+                    }
+                }
+                else{
+                    log("Playing: ${name.substringBefore("+")}")
+                    exoPlayer.prepare()
+                    exoPlayer.play()
+                }
                 exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
                     override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                         log("Error: ${error.message}")

@@ -4,33 +4,26 @@
     android:layout_height="@dimen/station_button_height"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
-    android:background="@drawable/item_station_background"
-    android:clipToOutline="true">
-    <View
-        android:id="@+id/stationButtonBack"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/station_button_row_height"
-        android:background="@drawable/gradient_background"
-        android:visibility="gone"
-        android:focusable="true"
-        android:radius="3dp"/>
+    android:background="@drawable/search_button_background">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:background="@drawable/bg_rounded"
         android:focusable="true"
+        android:background="@drawable/search_button_ripple"
         android:padding="@dimen/station_button_icon_padding"
+        android:layout_margin="3dp"
         android:radius="3dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/stationIcon"
-            android:layout_width="@dimen/station_button_icon_height"
-            android:layout_height="@dimen/station_button_icon_height"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/search_icon"
+            android:padding="5dp"
             app:shapeAppearance="@style/RoundedImageStyle"/>
 
         <TextView
@@ -38,11 +31,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Station Name"
+            android:text="Search Station Name..."
             android:textAlignment="center"
-            android:textSize="12sp"
-            android:maxLines="2"
+            android:background="@drawable/search_button_ripple"
+            android:textSize="18sp"
+            android:textColor="#B1B1B1"
+            android:maxLines="1"
             android:layout_marginHorizontal="3dp"
+            android:paddingVertical="6dp"
             android:ellipsize="end"/>
     </LinearLayout>
 </FrameLayout>
