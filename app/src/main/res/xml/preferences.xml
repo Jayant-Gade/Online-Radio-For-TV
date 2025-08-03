@@ -5,12 +5,18 @@
     <SwitchPreferenceCompat
         android:key="enable_http"
         android:title="Enable HTTP Traffic for Exoplayer"
-        android:summary="Allow ExoPlayer to load HTTP URLs"
+        android:summary="Allow ExoPlayer to load HTTP URLs."
         android:defaultValue="false" />
     <SwitchPreferenceCompat
         android:key="enable_http_other"
         android:title="Enable HTTP Traffic for other resources"
-        android:summary="Allow other resources to be able to get loaded by HTTP URLs"
+        android:summary="Allow other resources to be able to get loaded by HTTP URLs."
         android:defaultValue="false" />
-
+    <ListPreference
+        android:key="fav_columns"
+        android:title="Number of Favorite stations per row"
+        android:summary="Click to change how many station to show in favorite section per row. (Requires restart)"
+        android:entries="@array/number_entries"
+        android:entryValues="@array/number_values"
+        android:defaultValue="3" />
 </PreferenceScreen>

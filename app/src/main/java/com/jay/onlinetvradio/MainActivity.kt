@@ -1,43 +1,45 @@
 package com.jay.onlinetvradio
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.media.AudioManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.fragment.app.commit
+import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
+import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.session.MediaSession
+import androidx.media3.ui.PlayerNotificationManager
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.interfaces.DraweeController
+import com.facebook.drawee.view.SimpleDraweeView
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.concurrent.thread
-import android.net.Uri
-import android.view.View
-import android.view.animation.AnimationUtils
-import androidx.media3.session.MediaSession
-import android.app.PendingIntent
-import android.content.Intent
-import androidx.media3.ui.PlayerNotificationManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.util.Log
-import androidx.core.content.edit
-import kotlin.text.substringBefore
-import androidx.media3.common.Format
-import androidx.media3.exoplayer.analytics.AnalyticsListener
-import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
-import androidx.media3.common.MimeTypes
-import android.content.Context
-import android.media.AudioManager
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.preference.PreferenceManager
 import java.io.IOException
-import androidx.core.net.toUri
+import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
 
-    @androidx.media3.common.util.UnstableApi
+    @UnstableApi
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
     private val okHttpClient = OkHttpClient.Builder()
@@ -75,10 +77,12 @@ class MainActivity : AppCompatActivity() {
     private var currentStreamName: String? = null
 
 
-    private lateinit var playbackStatusGif: ImageView
+    private lateinit var playbackStatusGif: SimpleDraweeView
+    private lateinit var controller: DraweeController
 
     var apiServer: String? = null
 
+    @SuppressLint("UseKtx")
     @androidx.media3.common.util.UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,8 +91,15 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 
-        playbackStatusGif = findViewById(R.id.playbackStatusGif)
+        playbackStatusGif = findViewById<SimpleDraweeView>(R.id.playbackStatusGif)
+        val gifuri = Uri.parse("res://${packageName}/" + R.drawable.playing)
+        playbackStatusGif.setImageURI(gifuri)
+        controller = Fresco.newDraweeControllerBuilder()
+            .setUri(gifuri)
+            .setAutoPlayAnimations(false)
+            .build()
 
+        playbackStatusGif.controller = controller
         radioName = findViewById(R.id.radioName)
         qualityInfo = findViewById(R.id.qualityInfo)
         logText = findViewById(R.id.logText)
@@ -268,17 +279,11 @@ class MainActivity : AppCompatActivity() {
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_search_button, row_s, false)
         val settingButtonView = layoutInflater.inflate(R.layout.item_setting_button, row_s, false)
-        //val searchText = searchButtonView.findViewById<TextView>(R.id.stationName)
-        //val searchIcon = searchButtonView.findViewById<ImageView>(R.id.stationIcon)
-        //val settingText = settingButtonView.findViewById<TextView>(R.id.stationName)
-        //val settingIcon = settingButtonView.findViewById<ImageView>(R.id.stationIcon)
 
 
         searchButtonView.setOnClickListener { openSearchDialog() }
         val settingsDialog = SettingsDialogFragment()
 
-        //settingText.text = "Setting"
-        //settingIcon.setImageResource(android.R.drawable.ic_menu_preferences)
         settingButtonView.setOnClickListener {
             settingsDialog.show(supportFragmentManager, "settings")
 
@@ -545,15 +550,10 @@ class MainActivity : AppCompatActivity() {
             LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
                 marginStart = 4; marginEnd = 4
             }
-        /*
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val fav_col = prefs.getString("fav_columns", "3")?.toIntOrNull() ?: 3
         for (row in dynamicRows) {
-            if (row.childCount < 3) {
-                runOnUiThread { row.addView(view, params) }
-                break
-            }
-        }*/
-        for (row in dynamicRows) {
-            if (row.childCount < 3) {
+            if (row.childCount < fav_col) {
                 runOnUiThread { row.addView(view, params) }
                 return
             }
@@ -787,8 +787,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePlaybackGif(isPlaying: Boolean) {
-        val gifRes = if (isPlaying) R.drawable.playing else R.drawable.not_playing
-        Glide.with(this).asGif().load(gifRes).into(playbackStatusGif)
+        val anim = playbackStatusGif.controller?.animatable
+        if (isPlaying) anim?.start() else anim?.stop()
+
     }
 
     @androidx.media3.common.util.UnstableApi

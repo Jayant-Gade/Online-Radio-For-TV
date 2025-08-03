@@ -13,6 +13,7 @@ constraintlayout = "2.2.1"
 gridlayout = "1.1.0"
 preferenceKtx = "1.2.1"
 material = "1.12.0"
+androidGifDrawable = "1.2.27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,7 +34,6 @@ androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", vers
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

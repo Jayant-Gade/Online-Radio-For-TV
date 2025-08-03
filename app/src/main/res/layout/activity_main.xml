@@ -106,6 +106,7 @@
 
 
             <LinearLayout
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -144,11 +145,10 @@
                         android:text="Quality Info"
                         android:textSize="12sp" />
                 </LinearLayout>
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/playbackStatusGif"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/not_playing"
                     android:contentDescription="Playback status GIF"
                     android:scaleType="centerInside" />
             </LinearLayout>

@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.media:media:1.6.0")
     implementation("androidx.core:core:1.8.0")
     compileOnly ("androidx.media:media:1.6.0")
-
+    implementation("com.facebook.fresco:fresco:3.1.3")          // latest stable
+    implementation("com.facebook.fresco:animated-gif:3.1.3")
 
 }
