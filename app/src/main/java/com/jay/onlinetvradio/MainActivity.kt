@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         //add update states on first run to update states and languages
-        val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        var prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
         val isFirstRun = prefs.getBoolean("is_first_run", true)
 
         if (isFirstRun) {
@@ -279,6 +279,12 @@ class MainActivity : AppCompatActivity() {
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_search_button, row_s, false)
         val settingButtonView = layoutInflater.inflate(R.layout.item_setting_button, row_s, false)
+
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val defaulton = prefs.getBoolean("enable_default_section", false)
+        val defaultsection = findViewById<LinearLayout>(R.id.default_station)
+        if (!defaulton) defaultsection.visibility = View.GONE
 
 
         searchButtonView.setOnClickListener { openSearchDialog() }
