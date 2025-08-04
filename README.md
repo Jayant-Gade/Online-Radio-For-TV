@@ -159,7 +159,8 @@ Here are some usage examples done on an Android TV.
 <tr><td>
   
 ### <img align="left" src="images/menu.svg" width="30" alt="Menu" />  <ins>Context Menu For Fav/Recent</ins>
-* Click and hold Fav/Recent stations to show context menu.
+* Click and hold stations to show context menu.
+* Change server of some default stations.
 * Can delete and show info while playing.
 <img src="images/saved-context.gif" alt="TV Context Menu" />
 
@@ -174,12 +175,12 @@ Here are some usage examples done on an Android TV.
 - [x] Add Menu to change Language/Location of Default radio stations (Like Vividh Bharati-s2).
 - [x] Add more info when holding station in Fav/Recent.
 - [x] Add context menu for Default Radio stations.
-- [ ] Add settings for customisation.
+- [x] Add settings for customisation.
 - [ ] Record button.
 - [ ] Display off button.
 - [ ] Add animations like
   - [x] Loading Animation over clicked station.
-  - [ ] Clicking animation on stations.
+  - [x] Clicking animation on stations.
   - [ ] Popping out info panel Animation.
 
 See the [open issues](https://github.com/Jayant-Gade/Online-Radio-For-TV/issues) for a full list of proposed features (and known issues).

@@ -281,12 +281,6 @@ class MainActivity : AppCompatActivity() {
         val settingButtonView = layoutInflater.inflate(R.layout.item_setting_button, row_s, false)
 
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val defaulton = prefs.getBoolean("enable_default_section", true)
-        val defaultsection = findViewById<LinearLayout>(R.id.default_station)
-        if (!defaulton) defaultsection.visibility = View.GONE
-
-
         searchButtonView.setOnClickListener { openSearchDialog() }
         val settingsDialog = SettingsDialogFragment()
 
