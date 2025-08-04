@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
 
+    private val db = DBHelper(this, null)
+
     @UnstableApi
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
@@ -515,15 +517,13 @@ class MainActivity : AppCompatActivity() {
         skipDuplicateCheck: Boolean = false
     ) {
         if (!skipDuplicateCheck) {
-            val prefs = getSharedPreferences("dynamic_stations", MODE_PRIVATE)
-            val arr = JSONArray(prefs.getString("stations", "[]"))
-
-            for (i in 0 until arr.length()) {
-                val obj = arr.getJSONObject(i)
-                if (obj.getString("link") == link) {
+                if (db.isStationExists(link)) {
                     log("Station already added: $name")
                     return
                 }
+            else{
+                Log.d("database","call add station")
+                saveDynamicStation(name, iconUrl, link, meta)
             }
         }
 
@@ -546,71 +546,60 @@ class MainActivity : AppCompatActivity() {
             showContextMenu(view, name, link, meta)
             true
         }
+        Log.d("database","call befo4ere add station")
         val params =
             LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
                 marginStart = 4; marginEnd = 4
             }
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val fav_col = prefs.getString("fav_columns", "3")?.toIntOrNull() ?: 3
+        val favcol = prefs.getString("fav_columns", "3")?.toIntOrNull() ?: 3
         for (row in dynamicRows) {
-            if (row.childCount < fav_col) {
+            if (row.childCount < favcol) {
                 runOnUiThread { row.addView(view, params) }
                 return
             }
         }
         addNewRow()
         runOnUiThread { dynamicRows.last().addView(view, params) }
-        if (!skipDuplicateCheck) {
-            saveDynamicStation(name, iconUrl, link, meta)
-        }
+
+
     }
 
 
     private fun saveDynamicStation(name: String, iconUrl: String?, link: String, meta: JSONObject) {
-        val prefs = getSharedPreferences("dynamic_stations", MODE_PRIVATE)
-        val arr = JSONArray(prefs.getString("stations", "[]"))
-        val obj = JSONObject().apply {
-            put("name", name)
-            put("iconUrl", iconUrl ?: "")
-            put("link", link)
-            put("meta", meta)
-        }
-        arr.put(obj)
-        prefs.edit {
-            putString("stations", arr.toString())
-        }
+        Log.d("database","added station")
+        db.addStationDB(name,iconUrl,link,meta)
+        Toast.makeText(this, "Station added to Favorite", Toast.LENGTH_LONG).show()
+
     }
 
 
     private fun loadDynamicStations() {
-        val prefs = getSharedPreferences("dynamic_stations", MODE_PRIVATE)
-        val arrStr = prefs.getString("stations", null) ?: return
-        val arr = JSONArray(arrStr)
-        for (i in 0 until arr.length()) {
-            val obj = arr.getJSONObject(i)
-            val name = obj.getString("name")
-            val iconUrl = obj.optString("iconUrl", null)
-            val link = obj.getString("link")
-            val meta = obj.getJSONObject("meta")
-            addDynamicStation(name, iconUrl, link, meta, skipDuplicateCheck = true)
+        val cursor = db.getStationsDB()
+        cursor.use {
+            if (cursor.moveToFirst()) {
+                do {
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.NAME_COL))
+                    val iconUrl = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.ICONURL_COL))
+                    val link = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.LINK_COL))
+                    val meta = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.META_COL))
+                    // Append data to text views
+                    addDynamicStation(
+                        name,
+                        iconUrl,
+                        link,
+                        JSONObject(meta),
+                        skipDuplicateCheck = true
+                    )
+                } while (cursor.moveToNext())
+            }
         }
     }
 
-
     private fun removeDynamicStation(link: String) {
-        val prefs = getSharedPreferences("dynamic_stations", MODE_PRIVATE)
-        val arr = JSONArray(prefs.getString("stations", "[]"))
-        val newArr = JSONArray()
-        for (i in 0 until arr.length()) {
-            val obj = arr.getJSONObject(i)
-            if (obj.getString("link") != link) {
-                newArr.put(obj)
-            }
-        }
-        prefs.edit {
-            putString("stations", newArr.toString())
-        }
-        log("Removed station with link: $link")
+        val name = db.removeStationsDB(link)
+        Toast.makeText(this, "Station \"$name\" removed from Favorite", Toast.LENGTH_LONG).show()
+        log("Removed station with name: $name")
     }
 
 
@@ -681,29 +670,6 @@ class MainActivity : AppCompatActivity() {
                 log("Error: ${e.message}")
                 radioName.setText(R.string.error)
                 radioIcon.setImageResource(android.R.drawable.ic_delete)
-            }
-        }
-    }
-
-
-    private fun getStationByQuery(query: String, callback: (station: JSONObject?) -> Unit) {
-        thread {
-            try {
-                val server = apiServer ?: return@thread
-                val url =
-                    "https://$server/json/stations/search?limit=30&name=$query&hidebroken=true&order=clickcount&reverse=true"
-                val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
-                val body = response.body?.string()
-                if (!response.isSuccessful || body.isNullOrEmpty()) {
-                    callback(null); return@thread
-                }
-                val arr = JSONArray(body)
-                if (arr.length() == 0) {
-                    callback(null); return@thread
-                }
-                callback(arr.getJSONObject(0))
-            } catch (e: Exception) {
-                log("Error: ${e.message}"); callback(null)
             }
         }
     }
