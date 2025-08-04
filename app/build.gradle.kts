@@ -59,8 +59,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.fragment:fragment-ktx:1.8.8")
+    implementation("com.squareup.okhttp3:okhttp:5.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -74,6 +74,6 @@ dependencies {
     implementation("androidx.core:core:1.8.0")
     compileOnly ("androidx.media:media:1.6.0")
     implementation("com.facebook.fresco:fresco:3.1.3")          // latest stable
-    implementation("com.facebook.fresco:animated-gif:3.1.3")
+    implementation("com.facebook.fresco:animated-gif:3.6.0")
 
 }
