@@ -1,9 +1,11 @@
 package com.jay.onlinetvradio
 
+import com.jay.onlinetvradio.PlayerEvents
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -13,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.net.toUri
@@ -22,12 +25,14 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
+import androidx.media3.session.SessionToken
 import androidx.media3.ui.PlayerNotificationManager
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
@@ -40,11 +45,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.concurrent.thread
+import androidx.media3.session.MediaController
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaMetadata
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.guava.await
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var exoPlayer: ExoPlayer
+
     private lateinit var radioName: TextView
     private lateinit var qualityInfo: TextView
     private lateinit var logText: TextView
@@ -55,7 +65,8 @@ class MainActivity : AppCompatActivity() {
 
     @UnstableApi
 
-    private lateinit var playerNotificationManager: PlayerNotificationManager
+    lateinit var mediaController: MediaController
+
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -91,6 +102,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         //val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val sessionActivityPendingIntent = PendingIntent.getActivity(
+            this, 0, Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+
 
 
         playbackStatusGif = findViewById<SimpleDraweeView>(R.id.playbackStatusGif)
@@ -120,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         //the action bar is hidden
         //actionBar?.hide()
 
-        val defaultFactory = DefaultHttpDataSource.Factory()
+        /*val defaultFactory = DefaultHttpDataSource.Factory()
         val dataSourceFactory = SafeHttpDataSourceFactory(
             context = this,
             defaultFactory,
@@ -131,19 +148,30 @@ class MainActivity : AppCompatActivity() {
         val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
         exoPlayer = ExoPlayer.Builder(this)
             .setMediaSourceFactory(mediaSourceFactory)
-            .build()
+            .build()*/
 
-        val sessionActivityPendingIntent = PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE
-        )
-        mediaSession = MediaSession.Builder(this, exoPlayer)
-            .setSessionActivity(sessionActivityPendingIntent)
-            .build()
+
+        /*lifecycleScope.launch {
+            val sessionToken = SessionToken(this@MainActivity, ComponentName(this@MainActivity, PlaybackService::class.java))
+            val controller = MediaController.Builder(this@MainActivity, sessionToken).buildAsync().await()
+            mediaController = controller
+            val mediaItem = MediaItem.Builder()
+                .setUri("")
+                .setMediaId("")
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle("Online Radio")
+                        .setArtist("Demo Artist")
+                        .build()
+                ).build()
+            mediaController.setMediaItem(mediaItem)
+            mediaController.prepare()
+            mediaController.play()
+        }*/
+
         initApiServer()
 
-
-        val channelId = "radio_playback_channel"
+        /*val channelId = "radio_playback_channel"
 
         val channel = NotificationChannel(
             channelId,
@@ -166,7 +194,7 @@ class MainActivity : AppCompatActivity() {
             setUsePreviousAction(false)
             setUseNextAction(false)
             setUsePlayPauseActions(true)
-        }
+        }*/
         //adding servers
         saveServerList(
             "Vividh Bharati",
@@ -299,14 +327,14 @@ class MainActivity : AppCompatActivity() {
         }
         val param_search = LinearLayout.LayoutParams(
             0,
-            LinearLayout.LayoutParams.WRAP_CONTENT ,
-                    0.25f
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            0.25f
         ).apply {
             gravity = android.view.Gravity.CENTER
         }
 
-        row_s.addView(searchButtonView,param_search)
-        row_s.addView(settingButtonView,param_setting)
+        row_s.addView(searchButtonView, param_search)
+        row_s.addView(settingButtonView, param_setting)
         // Example: dynamically get BigFM
         /*getStationByQuery("bigfm") { station ->
             station?.let {
@@ -316,18 +344,52 @@ class MainActivity : AppCompatActivity() {
                 addStationButton(name, iconUrl, link, row1, it)
             }
         }*/
-        exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
+        /*exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 updatePlaybackGif(isPlaying)
             }
 
-        })
+        })*/
+        PlayerEvents.onQualityUpdate =
+            {codec, bitrate, channel ->
+                qualityInfo.text=""
+                qualityInfo.append("Codec:${codec} | ")
+                qualityInfo.append("Bitrate:${bitrate}kbps | ")
+                when (channel) {
+                    1 -> {
+                        qualityInfo.append("Channels:${channel} (Mono)")
+                    }
 
+                    2 -> {
+                        qualityInfo.append("Channels:${channel} (Stereo)")
+                    }
+
+                    else -> {
+                        qualityInfo.append("Channels:${channel}")
+                    }
+                }//debug area
+                Log.d("ExoPlayer", "Audio bitrate: ${bitrate / 1000} kbps")
+                Log.d("ExoPlayer", "Codec: $codec")
+                Log.d("ExoPlayer", "Channels: $channel")
+            }
+        PlayerEvents.onPlayerError = {
+            error ->
+            log("Error: ${error.message}")
+            animatingView?.clearAnimation()
+            radioName.setText(R.string.error)
+            radioIcon.setImageResource(android.R.drawable.ic_delete)
+        }
+        PlayerEvents.onPlayingUpdate = {
+            isPlaying ->
+            updatePlaybackGif(isPlaying)
+        }
+        /*
 
         exoPlayer.addAnalyticsListener(object : AnalyticsListener {
             override fun onAudioInputFormatChanged(
                 eventTime: AnalyticsListener.EventTime,
-                format: Format
+                format: Format,
+                decoderReuseEvaluation: DecoderReuseEvaluation?
             ) {
                 qualityInfo.text=""
                 qualityInfo.append("Codec:${format.sampleMimeType?.substringBefore("-")?.substringAfter("/")} | ")
@@ -347,6 +409,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }*/
     }
 
     private fun addNewRow() {
@@ -603,10 +666,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @OptIn(UnstableApi::class)
     private fun playStationDirect(name: String, iconUrl: String?, streamUrl: String) {
-        if (currentStreamName == name && exoPlayer.isPlaying) {
+        if (currentStreamName == name && mediaController.isPlaying) {
             // Same station clicked & already playing → pause
-            exoPlayer.pause()
+            mediaController.pause()
             animatingView?.clearAnimation()
             log("Paused: ${name.substringBefore("+")}")
             return
@@ -615,9 +679,31 @@ class MainActivity : AppCompatActivity() {
             //logAvailableDecoders()
 
             //debug end
-            qualityInfo.text="Loading..."
+            qualityInfo.text = "Loading..."
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            val http_on = prefs.getBoolean("enable_http", false)
+            lifecycleScope.launch {
+                try {
+                    val sessionToken = SessionToken(
+                        this@MainActivity,
+                        ComponentName(this@MainActivity, PlaybackService::class.java)
+                    )
+                    mediaController =
+                        MediaController.Builder(this@MainActivity, sessionToken).buildAsync()
+                            .await()
 
-            try {
+                    val mediaItem = MediaItem.Builder()
+                        .setUri(streamUrl.toUri())
+                        .setMediaId("radio-001")
+                        .setMediaMetadata(
+                            MediaMetadata.Builder()
+                                .setTitle(name.substringBefore("+"))
+                                .setArtworkUri(iconUrl?.run(Uri::parse))
+                                .build()
+                        ).build()
+
+                    mediaController.setMediaItem(mediaItem)
+                    /*
                 exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
                 exoPlayer.setMediaItem(
                     MediaItem.Builder()
@@ -629,47 +715,44 @@ class MainActivity : AppCompatActivity() {
                                 .build()
                         )
                         .build()
-                )
-                Log.d("MyApp", "playing $streamUrl")
-                currentStreamName = name
-                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-                val http_on = prefs.getBoolean("enable_http", false)
-                radioName.text = name.substringBefore("+")
-                if (!iconUrl.isNullOrEmpty()) {
-                    Glide.with(this).load(iconUrl).into(radioIcon)
-                } else {
-                    radioIcon.setImageResource(R.mipmap.ic_launcher)
-                }
-                val connectiontype = streamUrl?.toUri()?.scheme?.lowercase()
-                if (connectiontype=="http"){
-                    if (http_on) {
+                )*/
+                    Log.d("MyApp", "playing $streamUrl")
+                    currentStreamName = name
+                    radioName.text = name.substringBefore("+")
+                    if (!iconUrl.isNullOrEmpty()) {
+                        Glide.with(this@MainActivity).load(iconUrl).into(radioIcon)
+                    } else {
+                        radioIcon.setImageResource(R.mipmap.ic_launcher)
+                    }
+                    val connectiontype = streamUrl?.toUri()?.scheme?.lowercase()
+                    if (connectiontype == "http") {
+                        if (http_on) {
+                            log("Playing: ${name.substringBefore("+")}")
+                            mediaController.prepare()
+                            mediaController.play()
+                        } else {
+                            qualityInfo.text = "HTTP playback blocked by settings"
+                            log("HTTP playback blocked by settings")
+                            animatingView?.clearAnimation()
+                        }
+                    } else {
                         log("Playing: ${name.substringBefore("+")}")
-                        exoPlayer.prepare()
-                        exoPlayer.play()
+                        mediaController.prepare()
+                        mediaController.play()
                     }
-                    else {
-                        qualityInfo.text = "HTTP playback blocked by settings"
-                        log("HTTP playback blocked by settings")
-                        animatingView?.clearAnimation()
-                    }
+                    /*exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
+                        override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                            log("Error: ${error.message}")
+                            animatingView?.clearAnimation()
+                            radioName.setText(R.string.error)
+                            radioIcon.setImageResource(android.R.drawable.ic_delete)
+                        }
+                    })*/
+                } catch (e: Exception) {
+                    log("Error: ${e.message}")
+                    radioName.setText(R.string.error)
+                    radioIcon.setImageResource(android.R.drawable.ic_delete)
                 }
-                else{
-                    log("Playing: ${name.substringBefore("+")}")
-                    exoPlayer.prepare()
-                    exoPlayer.play()
-                }
-                exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
-                    override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                        log("Error: ${error.message}")
-                        animatingView?.clearAnimation()
-                        radioName.setText(R.string.error)
-                        radioIcon.setImageResource(android.R.drawable.ic_delete)
-                    }
-                })
-            } catch (e: Exception) {
-                log("Error: ${e.message}")
-                radioName.setText(R.string.error)
-                radioIcon.setImageResource(android.R.drawable.ic_delete)
             }
         }
     }
@@ -761,9 +844,8 @@ class MainActivity : AppCompatActivity() {
     @androidx.media3.common.util.UnstableApi
     override fun onDestroy() {
         super.onDestroy()
-        playerNotificationManager.setPlayer(null)
         mediaSession.release()
-        exoPlayer.release()
+        mediaController.release()
     }
 
 
@@ -795,4 +877,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 }
