@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import org.json.JSONObject
-import kotlin.contracts.Returns
 
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -82,23 +81,6 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         )
         return name?.take(10)
     }
-    // Inserts a new record into the database
-    /*fun addName(name: String, age: String) {
-        val values = ContentValues().apply {
-            put(NAME_COL, name)
-            put(AGE_COL, age)
-        }
-
-        writableDatabase.use { db ->
-            db.insert(TABLE_NAME, null, values)
-        }
-    }
-
-    // Retrieves all records from the database
-    fun getName(): Cursor {
-        return readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME", null)
-    }
-*/
     companion object {
         private const val DATABASE_NAME = "OnlineRadio"
         private const val DATABASE_VERSION = 1

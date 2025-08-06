@@ -1,9 +1,6 @@
 package com.jay.onlinetvradio
 
-import com.jay.onlinetvradio.PlayerEvents
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
@@ -14,42 +11,39 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.fragment.app.commit
-import androidx.media3.common.Format
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.DecoderReuseEvaluation
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
-import androidx.media3.ui.PlayerNotificationManager
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.interfaces.DraweeController
 import com.facebook.drawee.view.SimpleDraweeView
+import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.concurrent.thread
-import androidx.media3.session.MediaController
-import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.MediaMetadata
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.guava.await
 
 
 class MainActivity : AppCompatActivity() {
@@ -137,64 +131,10 @@ class MainActivity : AppCompatActivity() {
         //the action bar is hidden
         //actionBar?.hide()
 
-        /*val defaultFactory = DefaultHttpDataSource.Factory()
-        val dataSourceFactory = SafeHttpDataSourceFactory(
-            context = this,
-            defaultFactory,
-            onHttpBlocked = {
-                //runOnUiThread {                }
-            })
-
-        val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
-        exoPlayer = ExoPlayer.Builder(this)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .build()*/
-
-
-        /*lifecycleScope.launch {
-            val sessionToken = SessionToken(this@MainActivity, ComponentName(this@MainActivity, PlaybackService::class.java))
-            val controller = MediaController.Builder(this@MainActivity, sessionToken).buildAsync().await()
-            mediaController = controller
-            val mediaItem = MediaItem.Builder()
-                .setUri("")
-                .setMediaId("")
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setTitle("Online Radio")
-                        .setArtist("Demo Artist")
-                        .build()
-                ).build()
-            mediaController.setMediaItem(mediaItem)
-            mediaController.prepare()
-            mediaController.play()
-        }*/
 
         initApiServer()
 
-        /*val channelId = "radio_playback_channel"
 
-        val channel = NotificationChannel(
-            channelId,
-            "Radio Playback",
-            NotificationManager.IMPORTANCE_LOW
-        )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
-
-        playerNotificationManager = PlayerNotificationManager.Builder(
-            this,
-            1234,
-            channelId
-        ).build().apply {
-            setPlayer(exoPlayer)
-            setMediaSessionToken(mediaSession.sessionCompatToken) // ✅ <-- use this!
-            setSmallIcon(R.mipmap.ic_launcher)
-            setUseRewindAction(false)
-            setUseFastForwardAction(false)
-            setUsePreviousAction(false)
-            setUseNextAction(false)
-            setUsePlayPauseActions(true)
-        }*/
         //adding servers
         saveServerList(
             "Vividh Bharati",
@@ -344,12 +284,7 @@ class MainActivity : AppCompatActivity() {
                 addStationButton(name, iconUrl, link, row1, it)
             }
         }*/
-        /*exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                updatePlaybackGif(isPlaying)
-            }
 
-        })*/
         PlayerEvents.onQualityUpdate =
             {codec, bitrate, channel ->
                 qualityInfo.text=""
@@ -383,33 +318,6 @@ class MainActivity : AppCompatActivity() {
             isPlaying ->
             updatePlaybackGif(isPlaying)
         }
-        /*
-
-        exoPlayer.addAnalyticsListener(object : AnalyticsListener {
-            override fun onAudioInputFormatChanged(
-                eventTime: AnalyticsListener.EventTime,
-                format: Format,
-                decoderReuseEvaluation: DecoderReuseEvaluation?
-            ) {
-                qualityInfo.text=""
-                qualityInfo.append("Codec:${format.sampleMimeType?.substringBefore("-")?.substringAfter("/")} | ")
-                qualityInfo.append("Bitrate:${format.bitrate / 1000}kbps | ")
-                if (format.channelCount==1) {
-                    qualityInfo.append("Channels:${format.channelCount} (Mono)")
-                }
-                else if (format.channelCount==2) {
-                    qualityInfo.append("Channels:${format.channelCount} (Stereo)")
-                }
-                else {
-                    qualityInfo.append("Channels:${format.channelCount}")
-                }//debug area
-                Log.d("ExoPlayer", "Audio bitrate: ${format.bitrate / 1000} kbps")
-                Log.d("ExoPlayer", "Codec: ${format.sampleMimeType}")
-                Log.d("ExoPlayer", "Channels: ${format.channelCount}")
-            }
-        })
-
-    }*/
     }
 
     private fun addNewRow() {
@@ -703,19 +611,7 @@ class MainActivity : AppCompatActivity() {
                         ).build()
 
                     mediaController.setMediaItem(mediaItem)
-                    /*
-                exoPlayer.setMediaItem(MediaItem.fromUri(streamUrl))
-                exoPlayer.setMediaItem(
-                    MediaItem.Builder()
-                        .setUri(streamUrl)
-                        .setMediaMetadata(
-                            androidx.media3.common.MediaMetadata.Builder()
-                                .setTitle(name.substringBefore("+"))
-                                .setArtworkUri(iconUrl?.run(Uri::parse))
-                                .build()
-                        )
-                        .build()
-                )*/
+
                     Log.d("MyApp", "playing $streamUrl")
                     currentStreamName = name
                     radioName.text = name.substringBefore("+")
@@ -740,14 +636,7 @@ class MainActivity : AppCompatActivity() {
                         mediaController.prepare()
                         mediaController.play()
                     }
-                    /*exoPlayer.addListener(object : androidx.media3.common.Player.Listener {
-                        override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                            log("Error: ${error.message}")
-                            animatingView?.clearAnimation()
-                            radioName.setText(R.string.error)
-                            radioIcon.setImageResource(android.R.drawable.ic_delete)
-                        }
-                    })*/
+
                 } catch (e: Exception) {
                     log("Error: ${e.message}")
                     radioName.setText(R.string.error)

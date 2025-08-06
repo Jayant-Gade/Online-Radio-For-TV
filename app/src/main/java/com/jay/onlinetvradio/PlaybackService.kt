@@ -1,18 +1,13 @@
 package com.jay.onlinetvradio
 
-import com.jay.onlinetvradio.PlayerEvents
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
-import android.util.Log
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -25,8 +20,6 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.ui.PlayerNotificationManager
-import kotlin.div
-import kotlin.math.log
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
