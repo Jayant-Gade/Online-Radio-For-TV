@@ -275,15 +275,7 @@ class MainActivity : AppCompatActivity() {
 
         row_s.addView(searchButtonView, param_search)
         row_s.addView(settingButtonView, param_setting)
-        // Example: dynamically get BigFM
-        /*getStationByQuery("bigfm") { station ->
-            station?.let {
-                val name = it.getString("name")
-                val link = it.getString("url_resolved")
-                val iconUrl = it.optString("favicon", null)
-                addStationButton(name, iconUrl, link, row1, it)
-            }
-        }*/
+        
 
         PlayerEvents.onQualityUpdate =
             {codec, bitrate, channel ->
@@ -576,12 +568,21 @@ class MainActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     private fun playStationDirect(name: String, iconUrl: String?, streamUrl: String) {
-        if (currentStreamName == name && mediaController.isPlaying) {
+        if (currentStreamName == name) {
+            if(mediaController.isPlaying){
             // Same station clicked & already playing → pause
             mediaController.pause()
-            animatingView?.clearAnimation()
+                updatePlaybackGif(false)
+                animatingView?.clearAnimation()
             log("Paused: ${name.substringBefore("+")}")
             return
+            }
+            else{
+                mediaController.play()
+                updatePlaybackGif(true)
+                log("Playing: ${name.substringBefore("+")}")
+                return
+            }
         } else {
             //debug area
             //logAvailableDecoders()

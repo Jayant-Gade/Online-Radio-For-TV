@@ -1,15 +1,10 @@
 package com.jay.onlinetvradio
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.graphics.Bitmap
-import android.os.Build
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.Format
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DecoderReuseEvaluation
@@ -112,37 +107,5 @@ class PlaybackService : MediaSessionService() {
         }
         super.onDestroy()
     }
-    private fun isMediaPlaying(){
-        player.isPlaying
-    }
-    private fun createNotificationChannel(channelId: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                channelId,
-                "Media Playback",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(serviceChannel)
-        }
 
-    }
-
-    @UnstableApi
-    private inner class DescriptionAdapter : PlayerNotificationManager.MediaDescriptionAdapter {
-        override fun getCurrentContentTitle(player: Player): CharSequence {
-            return player.mediaMetadata.title ?: "No Title"
-        }
-
-        override fun createCurrentContentIntent(player: Player): PendingIntent? = null
-
-        override fun getCurrentContentText(player: Player): CharSequence? {
-            return player.mediaMetadata.artist
-        }
-
-        override fun getCurrentLargeIcon(
-            player: Player,
-            callback: PlayerNotificationManager.BitmapCallback
-        ): Bitmap? = null
-    }
 }
