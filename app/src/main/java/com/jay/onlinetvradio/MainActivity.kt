@@ -309,6 +309,13 @@ class MainActivity : AppCompatActivity() {
         PlayerEvents.onPlayingUpdate = {
             isPlaying ->
             updatePlaybackGif(isPlaying)
+            playButtonAnimation(animatingView?.findViewById<View>(R.id.stationButtonBack),(if (isPlaying) 1 else 0)+1)
+            if(isPlaying){
+                log("Playing: ${currentStreamName?.substringBefore("+")}")
+            }
+            else{
+                log("Paused: ${currentStreamName?.substringBefore("+")}")
+            }
         }
     }
 
@@ -365,17 +372,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playButtonAnimation(view: View) {
+    private fun playButtonAnimation(view: View?, status: Int) {//0=disappear,1=appear,2=start, (0 is not implemented!)
         var glowView: View? = null
         glowView = animatingView?.findViewById<View>(R.id.stationButtonBack)
         glowView?.clearAnimation()
         glowView?.visibility = View.INVISIBLE
-        val fadeAnim = AnimationUtils.loadAnimation(view.context, R.anim.gradient_motion)
-        glowView = view.findViewById<View>(R.id.stationButtonBack)
-        glowView.startAnimation(fadeAnim)
-        glowView.visibility = View.VISIBLE
-        animatingView = view
-
+        when(status){
+            1 -> {
+                val fadeAnim = AnimationUtils.loadAnimation(view?.context, R.anim.gradient_motion)
+                glowView = view?.findViewById<View>(R.id.stationButtonBack)
+                glowView?.visibility = View.VISIBLE
+                animatingView = view
+            }
+            2 -> {
+                val fadeAnim = AnimationUtils.loadAnimation(view?.context, R.anim.gradient_motion)
+                glowView = view?.findViewById<View>(R.id.stationButtonBack)
+                glowView?.startAnimation(fadeAnim)
+                glowView?.visibility = View.VISIBLE
+                animatingView = view
+            }
+        }
 
     }
 
@@ -419,7 +435,7 @@ class MainActivity : AppCompatActivity() {
             iconView.setImageResource(R.mipmap.ic_launcher)
         }
         view.setOnClickListener {
-            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack))
+            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack),2)
 
             val prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
             val savedLink = prefs.getString("${name}_selected_link", null)
@@ -502,7 +518,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         view.setOnClickListener {
-            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack))
+            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack),2)
             playStationDirect(name, iconUrl, link)
         }
         view.setOnLongClickListener {
@@ -570,12 +586,12 @@ class MainActivity : AppCompatActivity() {
     private fun playStationDirect(name: String, iconUrl: String?, streamUrl: String) {
         if (currentStreamName == name) {
             if(mediaController.isPlaying){
-            // Same station clicked & already playing → pause
-            mediaController.pause()
-                updatePlaybackGif(false)
-                animatingView?.clearAnimation()
-            log("Paused: ${name.substringBefore("+")}")
-            return
+                // Same station clicked & already playing → pause
+                mediaController.pause()
+                    updatePlaybackGif(false)
+                    animatingView?.clearAnimation()
+                log("Paused: ${name.substringBefore("+")}")
+                return
             }
             else{
                 mediaController.play()
@@ -663,7 +679,7 @@ class MainActivity : AppCompatActivity() {
         val iconUrl = meta.optString("favicon", null)
         val popup = PopupMenu(this, anchor)
         popup.menu.add("Play").setOnMenuItemClickListener {
-            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack))
+            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack),2)
             playStationDirect(name, iconUrl, link)
             true
         }
@@ -684,7 +700,7 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, anchor)
         val parentRow = anchor.parent as LinearLayout
         popup.menu.add("Play").setOnMenuItemClickListener {
-            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack))
+            playButtonAnimation(anchor.findViewById<View>(R.id.stationButtonBack),2)
             playStationDirect(name.substringBefore("+").replace("-", " "), iconUrl, link)
             true
         }
@@ -731,13 +747,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
     @androidx.media3.common.util.UnstableApi
     override fun onDestroy() {
         super.onDestroy()
         mediaSession.release()
         mediaController.release()
     }
-
 
     @UnstableApi
     fun logAvailableDecoders() {
