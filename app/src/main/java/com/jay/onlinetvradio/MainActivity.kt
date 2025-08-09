@@ -50,7 +50,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var radioName: TextView
-    private lateinit var qualityInfo: TextView
+    private lateinit var radioTitle: TextView
+    private lateinit var radioArtist: TextView
+    private lateinit var qualityCodec: TextView
+    private lateinit var qualityBitrate: TextView
+    private lateinit var qualityChannel: TextView
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
@@ -114,9 +118,18 @@ class MainActivity : AppCompatActivity() {
 
         playbackStatusGif.controller = controller
         radioName = findViewById(R.id.radioName)
-        qualityInfo = findViewById(R.id.qualityInfo)
+        radioName.isSelected = true
+        radioTitle = findViewById(R.id.radioTitle)
+        radioTitle.isSelected = true
+        radioArtist = findViewById(R.id.radioArtist)
+        radioArtist.isSelected = true
+        qualityCodec = findViewById(R.id.qualityCodec)
+        qualityBitrate = findViewById(R.id.qualityBitrate)
+        qualityChannel = findViewById(R.id.qualityChannel)
         logText = findViewById(R.id.logText)
         radioIcon = findViewById(R.id.radioIcon)
+
+
 
         row1 = findViewById(R.id.row1)
         row2 = findViewById(R.id.row2)
@@ -275,26 +288,27 @@ class MainActivity : AppCompatActivity() {
 
         row_s.addView(searchButtonView, param_search)
         row_s.addView(settingButtonView, param_setting)
-        
+
 
         PlayerEvents.onQualityUpdate =
             {codec, bitrate, channel ->
-                qualityInfo.text=""
-                qualityInfo.append("Codec:${codec} | ")
-                qualityInfo.append("Bitrate:${bitrate}kbps | ")
+                /*qualityCodec.text = "Codec:${codec} | "
+                qualityBitrate.text ="Bitrate:${bitrate}kbps | "
+                qualityChannel.text =""
                 when (channel) {
                     1 -> {
-                        qualityInfo.append("Channels:${channel} (Mono)")
+                        qualityChannel.text =("Channels:${channel} (Mono)")
                     }
 
                     2 -> {
-                        qualityInfo.append("Channels:${channel} (Stereo)")
+                        qualityChannel.text =("Channels:${channel} (Stereo)")
                     }
 
                     else -> {
-                        qualityInfo.append("Channels:${channel}")
+                        qualityChannel.text =("Channels:${channel}")
                     }
-                }//debug area
+                }//debug area*/
+                updateQualityView(codec, bitrate, channel, reset=0)////0 to reset/blank,1 to set string
                 Log.d("ExoPlayer", "Audio bitrate: ${bitrate / 1000} kbps")
                 Log.d("ExoPlayer", "Codec: $codec")
                 Log.d("ExoPlayer", "Channels: $channel")
@@ -317,6 +331,16 @@ class MainActivity : AppCompatActivity() {
                 log("Paused: ${currentStreamName?.substringBefore("+")}")
             }
         }
+        PlayerEvents.onMetadataUpdate =
+            { entry ->
+                if (entry.isNullOrEmpty()) {
+                    radioTitle.text = "Unknown"
+                    radioArtist.text = "Unknown"
+                } else {
+                    radioTitle.text = entry.substringBefore(" - ")
+                    radioArtist.text = entry.substringAfter(" - ")
+                }
+            }
     }
 
     private fun addNewRow() {
@@ -604,7 +628,9 @@ class MainActivity : AppCompatActivity() {
             //logAvailableDecoders()
 
             //debug end
-            qualityInfo.text = "Loading..."
+            updateQualityView(reset=1,textset = "Loading...")////0 to reset/blank,1 to set string
+            //qualityInfo.text = "Loading..."
+            //qualityInfo.isSelected = true
             val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
             val http_on = prefs.getBoolean("enable_http", false)
             lifecycleScope.launch {
@@ -632,6 +658,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MyApp", "playing $streamUrl")
                     currentStreamName = name
                     radioName.text = name.substringBefore("+")
+                    radioName.isSelected = true
                     if (!iconUrl.isNullOrEmpty()) {
                         Glide.with(this@MainActivity).load(iconUrl).into(radioIcon)
                     } else {
@@ -644,7 +671,8 @@ class MainActivity : AppCompatActivity() {
                             mediaController.prepare()
                             mediaController.play()
                         } else {
-                            qualityInfo.text = "HTTP playback blocked by settings"
+                            updateQualityView(reset=1,textset = "HTTP playback blocked by settings")////0 to reset/blank,1 to set string
+                            //qualityInfo.text = "HTTP playback blocked by settings"
                             log("HTTP playback blocked by settings")
                             animatingView?.clearAnimation()
                         }
@@ -674,7 +702,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateQualityView(codec:String? = null,bitrate:Int = -1,channel:Int = 0,reset: Int=-1,textset:String? = null)//0 to reset/blank,1 to set string
+    {
+        if(reset==1){
+            qualityCodec.text = ""
+            qualityChannel.text = ""
+            qualityBitrate.text = textset
+        }
+        else {
+            if (reset == 0) {
+                qualityCodec.text = ""
+                qualityChannel.text = ""
+                qualityBitrate.text = ""
+            }
+            if (!codec.isNullOrEmpty()) {
+                qualityCodec.text = "Codec:${codec} | "
+            }
+            if (channel > 0) {
+                when (channel) {
+                    1 -> {
+                        qualityChannel.text = ("Channels:${channel} (Mono)")
+                    }
 
+                    2 -> {
+                        qualityChannel.text = ("Channels:${channel} (Stereo)")
+                    }
+
+                    else -> {
+                        qualityChannel.text = ("Channels:${channel}")
+                    }
+                }//debug area
+            }
+            if (bitrate>-1) {
+                qualityBitrate.text = "Bitrate:${bitrate}kbps | "
+            }
+        }
+    }
     private fun showContextMenu(anchor: View, name: String, link: String, meta: JSONObject) {
         val iconUrl = meta.optString("favicon", null)
         val popup = PopupMenu(this, anchor)

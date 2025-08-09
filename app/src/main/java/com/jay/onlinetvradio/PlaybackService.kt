@@ -5,12 +5,15 @@ import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.Format
+import androidx.media3.common.Metadata
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.MediaStyleNotificationHelper
@@ -58,11 +61,33 @@ class PlaybackService : MediaSessionService() {
 
                 PlayerEvents.onQualityUpdate?.invoke(codec,bitrate,channel)
             }
+            override fun onBandwidthEstimate(
+                eventTime: AnalyticsListener.EventTime,
+                totalLoadTimeMs: Int,
+                totalBytesLoaded: Long,
+                bitrateEstimate: Long
+            ) {
+                val kbps: Int = (bitrateEstimate / 1024).toInt()// convert to kilobits/sec
+                println("Current speed: $kbps kbps")
+                PlayerEvents.onBitrateUpdate?.invoke(kbps)
+                //TODO: update your UI in activity
+            }
         })
 
         player.addListener(object : androidx.media3.common.Player.Listener {
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
                 PlayerEvents.onPlayerError?.invoke(error)
+            }
+            override fun onMetadata(metadata: Metadata) {
+                for (i in 0 until metadata.length()) {
+                    val entry = metadata[i]
+                    if (entry is IcyInfo) {
+                        val title = entry.title // "Artist - Song"
+                        val url = entry.url // optional stream URL
+                        Log.d("Exodata","Now playing: $title")
+                        PlayerEvents.onMetadataUpdate?.invoke(entry.title)
+                    }
+                }
             }
         })
 

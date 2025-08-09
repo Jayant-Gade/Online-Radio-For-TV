@@ -76,6 +76,8 @@ dependencies {
     implementation("com.facebook.fresco:fresco:3.6.0")          // latest stable
     implementation("com.facebook.fresco:animated-gif:3.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.8.0")
+    implementation("androidx.emoji2:emoji2:1.5.0")
+    implementation("androidx.emoji2:emoji2-views:1.5.0")
 
 
 }
