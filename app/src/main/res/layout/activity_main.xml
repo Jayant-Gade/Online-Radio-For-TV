@@ -106,7 +106,6 @@
 
 
             <LinearLayout
-                xmlns:fresco="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -154,6 +153,7 @@
                             android:singleLine="true"
                             android:gravity="center"
                             android:text="Not playing"
+                            android:textIsSelectable="true"
                             android:textSize="18sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -182,6 +182,7 @@
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
+                            android:textIsSelectable="true"
                             android:gravity="center"
                             android:text="Not playing"
                             android:textSize="18sp" />
@@ -212,6 +213,7 @@
                             android:scrollHorizontally="true"
                             android:singleLine="true"
                             android:gravity="center"
+                            android:textIsSelectable="true"
                             android:text="Not playing"
                             android:textSize="16sp" />
                     </LinearLayout>

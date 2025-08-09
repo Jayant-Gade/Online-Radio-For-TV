@@ -362,7 +362,20 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Exodata","bitrate is $bitrate")
             }
     }
-
+    override fun onResume() {
+        super.onResume()
+        if(!currentStreamName.isNullOrEmpty()) {
+            if (mediaController.isPlaying) {
+                playbackStatusGif.postDelayed({
+                    playbackStatusGif.controller?.animatable?.start()
+                }, 150)
+            }
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        playbackStatusGif.controller?.animatable?.stop()
+    }
     private fun addNewRow() {
         val newRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -649,6 +662,8 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                     else{
+                        radioTitle.text = "..."
+                        radioArtist.text = "..."
                         animatingView?.clearAnimation()
                     }
                 }
@@ -662,7 +677,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             //debug area
             //logAvailableDecoders()
-
+            radioTitle.text = "..."
+            radioArtist.text = "..."
             //debug end
             updateQualityView(reset=1,textset = "Loading...")////0 to reset/blank,1 to set string
             //qualityInfo.text = "Loading..."
@@ -847,9 +863,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
+
     @androidx.media3.common.util.UnstableApi
     override fun onDestroy() {
         super.onDestroy()
