@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
     private val dynamicRows = mutableListOf<LinearLayout>()
 
     private var currentStreamName: String? = null
+    private var currentStreamURL: String? = null
 
 
     private lateinit var playbackStatusGif: SimpleDraweeView
@@ -316,10 +317,23 @@ class MainActivity : AppCompatActivity() {
             }
         PlayerEvents.onPlayerError = {
             error ->
-            log("Error: ${error.message}")
-            animatingView?.clearAnimation()
-            radioName.setText(R.string.error)
-            radioIcon.setImageResource(android.R.drawable.ic_delete)
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            val http_on = prefs.getBoolean("enable_http", false)
+            val connectiontype = currentStreamURL?.toUri()?.scheme?.lowercase()
+            if (connectiontype=="http") {
+                if(http_on) {
+                    log("Error: ${error.message}")
+                    animatingView?.clearAnimation()
+                    radioName.setText(R.string.error)
+                    radioIcon.setImageResource(android.R.drawable.ic_delete)
+                }
+            }
+            else{
+                log("Error: ${error.message}")
+                animatingView?.clearAnimation()
+                radioName.setText(R.string.error)
+                radioIcon.setImageResource(android.R.drawable.ic_delete)
+            }
         }
         PlayerEvents.onPlayingUpdate = {
             isPlaying ->
@@ -673,9 +687,11 @@ class MainActivity : AppCompatActivity() {
                                 .build()
                         ).build()
 
+                    mediaController.setMediaItem(mediaItem)
 
                     Log.d("MyApp", "playing $streamUrl")
                     currentStreamName = name
+                    currentStreamURL = streamUrl
                     radioName.text = name.substringBefore("+")
                     radioName.isSelected = true
                     if (!iconUrl.isNullOrEmpty()) {
@@ -687,7 +703,6 @@ class MainActivity : AppCompatActivity() {
                     if (connectiontype == "http") {
                         if (http_on) {
                             log("Playing: ${name.substringBefore("+")}")
-                            mediaController.setMediaItem(mediaItem)
                             mediaController.play()
                         } else {
                             updateQualityView(reset=1,textset = "HTTP playback blocked by settings")////0 to reset/blank,1 to set string
@@ -697,7 +712,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         log("Playing: ${name.substringBefore("+")}")
-                        mediaController.setMediaItem(mediaItem)
                         mediaController.play()
                     }
 
