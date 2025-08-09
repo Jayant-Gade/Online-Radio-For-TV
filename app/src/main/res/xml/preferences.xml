@@ -23,4 +23,9 @@
         android:title="Enable HTTP Traffic for other resources"
         android:summary="Allow other resources to be able to get loaded by HTTP URLs."
         android:defaultValue="false" />
+    <SwitchPreferenceCompat
+        android:key="enable_log_window"
+        android:title="Enable Log window"
+        android:summary="Enable Log window at the bottom of screen. (1 line space) (Requires Restart)"
+        android:defaultValue="false" />
 </PreferenceScreen>

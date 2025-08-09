@@ -196,68 +196,84 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("FirstRun", "lol adding buttons")
 
-        // Add fixed stations directly:
-        //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
-        addStationButton(
-            "Radio City Freedom-+r1",
-            "https://onlineradiofm.in/assets/image/radio/180/PlanetRadioCity-Freedom.png",
-            "https://stream-140.zeno.fm/d6f5w51zrf9uv",
-            row1
-        )
-        addStationButton(
-            "Mirchi Love-+r1",
-            "https://liveradios.in/wp-content/uploads/mirchilove-1.jpg",
-            "https://2.mystreaming.net/uber/lrbollywood/icecast.audio",
-            row1
-        )
-        addStationButton(
-            "Big FM-+r1",
-            "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png",
-            "https://listen.openstream.co/4434/audio",
-            row1
-        )
-        addStationButton(
-            "Red FM-+r1",
-            "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content",
-            "https://stream.zeno.fm/9phrkb1e3v8uv",
-            row1
-        )
-        addStationButton(
-            "Fever 104 FM-+r1",
-            "https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg",
-            "https://radio.canstream.co.uk:8115/live.mp3",
-            row1
-        )
-        addStationButton(
-            "Radio Mirchi-+r2",
-            "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg",
-            "https://eu8.fastcast4u.com/proxy/clyedupq/stream",
-            row2
-        )
-        addStationButton(
-            "Vividh Bharati-1+r2",
-            "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
-            "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
-            row2
-        )
-        addStationButton(
-            "Vividh Bharati-2+r2",
-            "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
-            "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
-            row2
-        )
-        addStationButton(
-            "AIR FM Rainbow-+r2",
-            "https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp",
-            "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",
-            row2
-        )
-        addStationButton(
-            "AIR FM Gold-+r2",
-            "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp",
-            "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",
-            row2
-        )
+
+        //check if hide or show default section
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val enableDefaultSection = prefs.getBoolean("enable_default_section", true)
+        if(enableDefaultSection) {
+            // Add fixed stations directly:
+            //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
+            addStationButton(
+                "Radio City Freedom-+r1",
+                "https://onlineradiofm.in/assets/image/radio/180/PlanetRadioCity-Freedom.png",
+                "https://stream-140.zeno.fm/d6f5w51zrf9uv",
+                row1
+            )
+            addStationButton(
+                "Mirchi Love-+r1",
+                "https://liveradios.in/wp-content/uploads/mirchilove-1.jpg",
+                "https://2.mystreaming.net/uber/lrbollywood/icecast.audio",
+                row1
+            )
+            addStationButton(
+                "Big FM-+r1",
+                "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png",
+                "https://listen.openstream.co/4434/audio",
+                row1
+            )
+            addStationButton(
+                "Red FM-+r1",
+                "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content",
+                "https://stream.zeno.fm/9phrkb1e3v8uv",
+                row1
+            )
+            addStationButton(
+                "Fever 104 FM-+r1",
+                "https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg",
+                "https://radio.canstream.co.uk:8115/live.mp3",
+                row1
+            )
+            addStationButton(
+                "Radio Mirchi-+r2",
+                "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg",
+                "https://eu8.fastcast4u.com/proxy/clyedupq/stream",
+                row2
+            )
+            addStationButton(
+                "Vividh Bharati-1+r2",
+                "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
+                "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+                row2
+            )
+            addStationButton(
+                "Vividh Bharati-2+r2",
+                "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
+                "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
+                row2
+            )
+            addStationButton(
+                "AIR FM Rainbow-+r2",
+                "https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp",
+                "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",
+                row2
+            )
+            addStationButton(
+                "AIR FM Gold-+r2",
+                "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp",
+                "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",
+                row2
+            )
+        }
+        else{
+            val defaultSection = findViewById<View>(R.id.default_station)
+            defaultSection.visibility = View.GONE
+        }
+
+        //check if hide/show log window
+        val enableLogWindow = prefs.getBoolean("enable_log_window", false)
+        if (!enableLogWindow){
+            logText.visibility=View.GONE
+        }
         //Log.d("MyApp","helloooo")
         // Add search button in row_s
         val searchButtonView = layoutInflater.inflate(R.layout.item_search_button, row_s, false)
