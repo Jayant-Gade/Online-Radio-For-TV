@@ -614,6 +614,9 @@ class MainActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     private fun playStationDirect(name: String, iconUrl: String?, streamUrl: String) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+        val http_on = prefs.getBoolean("enable_http", false)
+        val connectiontype = streamUrl?.toUri()?.scheme?.lowercase()
         if (currentStreamName == name) {
             if(mediaController.isPlaying){
                 // Same station clicked & already playing → pause
@@ -624,10 +627,23 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             else{
-                mediaController.play()
-                updatePlaybackGif(true)
-                log("Playing: ${name.substringBefore("+")}")
-                return
+                if (connectiontype == "http") {
+                    if (http_on) {
+                        mediaController.play()
+                        updatePlaybackGif(true)
+                        log("Playing: ${name.substringBefore("+")}")
+                        return
+                    }
+                    else{
+                        animatingView?.clearAnimation()
+                    }
+                }
+                else{
+                    mediaController.play()
+                    updatePlaybackGif(true)
+                    log("Playing: ${name.substringBefore("+")}")
+                    return
+                }
             }
         } else {
             //debug area
@@ -637,8 +653,6 @@ class MainActivity : AppCompatActivity() {
             updateQualityView(reset=1,textset = "Loading...")////0 to reset/blank,1 to set string
             //qualityInfo.text = "Loading..."
             //qualityInfo.isSelected = true
-            val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            val http_on = prefs.getBoolean("enable_http", false)
             lifecycleScope.launch {
                 try {
                     val sessionToken = SessionToken(
@@ -659,7 +673,6 @@ class MainActivity : AppCompatActivity() {
                                 .build()
                         ).build()
 
-                    mediaController.setMediaItem(mediaItem)
 
                     Log.d("MyApp", "playing $streamUrl")
                     currentStreamName = name
@@ -670,11 +683,11 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         radioIcon.setImageResource(R.mipmap.ic_launcher)
                     }
-                    val connectiontype = streamUrl?.toUri()?.scheme?.lowercase()
+
                     if (connectiontype == "http") {
                         if (http_on) {
                             log("Playing: ${name.substringBefore("+")}")
-                            mediaController.prepare()
+                            mediaController.setMediaItem(mediaItem)
                             mediaController.play()
                         } else {
                             updateQualityView(reset=1,textset = "HTTP playback blocked by settings")////0 to reset/blank,1 to set string
@@ -684,7 +697,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         log("Playing: ${name.substringBefore("+")}")
-                        mediaController.prepare()
+                        mediaController.setMediaItem(mediaItem)
                         mediaController.play()
                     }
 
