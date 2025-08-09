@@ -117,8 +117,8 @@
 
                 <ImageView
                     android:id="@+id/radioIcon"
-                    android:layout_width="98dp"
-                    android:layout_height="98dp"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
                     android:src="@mipmap/ic_launcher"
                     android:scaleType="fitCenter"
                     android:padding="0dp"/>
@@ -199,7 +199,7 @@
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
-                            android:gravity="center"
+                            android:gravity="top"
                             android:text="📻"
                             android:textSize="18sp" />
                         <TextView
@@ -213,25 +213,24 @@
                             android:singleLine="true"
                             android:gravity="center"
                             android:text="Not playing"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:singleLine="true"
                         android:orientation="horizontal">
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:lines="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
                             android:singleLine="true"
                             android:gravity="center"
-                            android:text="📻"
-                            android:textSize="18sp" />
+                            android:text=" ⚙️"
+                            android:textSize="12sp" />
                         <LinearLayout
+                            android:id="@+id/qualityInfo"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -252,7 +251,7 @@
                                 android:singleLine="true"
                                 android:gravity="center"
                                 android:textColor="#00E6FF"
-                                android:text="Quality Info"
+                                android:text=""
                                 android:textSize="12sp" />
                             <TextView
                                 android:id="@+id/qualityBitrate"
@@ -265,7 +264,7 @@
                                 android:singleLine="true"
                                 android:gravity="center"
                                 android:textColor="#00E6FF"
-                                android:text="Quality Info"
+                                android:text=""
                                 android:textSize="12sp" />
                             <TextView
                                 android:id="@+id/qualityChannel"
@@ -285,8 +284,8 @@
                 </LinearLayout>
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/playbackStatusGif"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
                     android:contentDescription="Playback status GIF"
                     android:scaleType="centerInside" />
             </LinearLayout>

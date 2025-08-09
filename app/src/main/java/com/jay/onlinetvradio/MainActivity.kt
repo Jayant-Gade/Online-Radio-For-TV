@@ -292,22 +292,7 @@ class MainActivity : AppCompatActivity() {
 
         PlayerEvents.onQualityUpdate =
             {codec, bitrate, channel ->
-                /*qualityCodec.text = "Codec:${codec} | "
-                qualityBitrate.text ="Bitrate:${bitrate}kbps | "
-                qualityChannel.text =""
-                when (channel) {
-                    1 -> {
-                        qualityChannel.text =("Channels:${channel} (Mono)")
-                    }
-
-                    2 -> {
-                        qualityChannel.text =("Channels:${channel} (Stereo)")
-                    }
-
-                    else -> {
-                        qualityChannel.text =("Channels:${channel}")
-                    }
-                }//debug area*/
+                //debug area
                 updateQualityView(codec, bitrate, channel, reset=0)////0 to reset/blank,1 to set string
                 Log.d("ExoPlayer", "Audio bitrate: ${bitrate / 1000} kbps")
                 Log.d("ExoPlayer", "Codec: $codec")
@@ -337,9 +322,14 @@ class MainActivity : AppCompatActivity() {
                     radioTitle.text = "Unknown"
                     radioArtist.text = "Unknown"
                 } else {
-                    radioTitle.text = entry.substringBefore(" - ")
-                    radioArtist.text = entry.substringAfter(" - ")
+                    radioTitle.text = entry.substringAfter(" - ")
+                    radioArtist.text = entry.substringBefore(" - ")
                 }
+            }
+        PlayerEvents.onBitrateUpdate =
+            { bitrate ->
+                updateQualityView(bitrate = bitrate)
+                Log.d("Exodata","bitrate is $bitrate")
             }
     }
 
@@ -702,23 +692,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateQualityView(codec:String? = null,bitrate:Int = -1,channel:Int = 0,reset: Int=-1,textset:String? = null)//0 to reset/blank,1 to set string
+    private fun updateQualityView(codec:String? = null,bitrate:Int = 0,channel:Int = 0,reset: Int=-1,textset:String? = null)//0 to reset/blank,1 to set string
     {
         if(reset==1){
             qualityCodec.text = ""
-            qualityChannel.text = ""
-            qualityBitrate.text = textset
+            qualityChannel.text = textset
+            qualityBitrate.text = ""
         }
         else {
-            if (reset == 0) {
-                qualityCodec.text = ""
-                qualityChannel.text = ""
-                qualityBitrate.text = ""
-            }
             if (!codec.isNullOrEmpty()) {
+                if (reset == 0) {
+                    qualityCodec.text = ""
+                }
                 qualityCodec.text = "Codec:${codec} | "
             }
             if (channel > 0) {
+                if (reset == 0) {
+                    qualityChannel.text = ""
+                }
                 when (channel) {
                     1 -> {
                         qualityChannel.text = ("Channels:${channel} (Mono)")
@@ -733,7 +724,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }//debug area
             }
-            if (bitrate>-1) {
+            if (bitrate>0) {
+                if (reset == 0) {
+                    qualityBitrate.text = ""
+                }
                 qualityBitrate.text = "Bitrate:${bitrate}kbps | "
             }
         }
