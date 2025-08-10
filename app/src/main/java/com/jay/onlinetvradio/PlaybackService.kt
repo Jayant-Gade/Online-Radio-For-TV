@@ -36,7 +36,6 @@ import androidx.media3.ui.PlayerNotificationManager
 class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var player: ExoPlayer
-    private lateinit var playerNotificationManager: PlayerNotificationManager
 
     // Create your player and media session in the onCreate lifecycle event
 
@@ -58,7 +57,7 @@ class PlaybackService : MediaSessionService() {
             .build()
 
 
-        player.addListener(object : androidx.media3.common.Player.Listener {
+        player.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 PlayerEvents.onPlayingUpdate?.invoke(isPlaying)
                 //updatePlaybackGif(isPlaying)
@@ -95,19 +94,19 @@ class PlaybackService : MediaSessionService() {
                 for (group in tracks.groups) {
                     for (i in 0 until group.length) {
                         val format = group.getTrackFormat(i)
-                        val audioType = format.sampleMimeType ?: "Unknown"
-                        val codec = format.codecs ?: "Unknown"
+                        //val audioType = format.sampleMimeType ?: "Unknown"
+                        //val codec = format.codecs ?: "Unknown"
                         val bitrate = if (format.bitrate != Format.NO_VALUE) format.bitrate / 1000 else 0
-                        val sampleRate = if (format.sampleRate != Format.NO_VALUE) format.sampleRate else 0
-                        val channels = if (format.channelCount != Format.NO_VALUE) format.channelCount else 0
+                        //val sampleRate = if (format.sampleRate != Format.NO_VALUE) format.sampleRate else 0
+                        //val channels = if (format.channelCount != Format.NO_VALUE) format.channelCount else 0
                         if(bitrate>0) {
                             PlayerEvents.onBitrateUpdate?.invoke(bitrate)
                         }
-                        Log.d(
+                        /*Log.d(
                             "exodata",
                             "AudioType: $audioType, Codec: $codec, Bitrate: $bitrate, " +
                                     "SampleRate: $sampleRate, Channels: $channels"
-                        )
+                        )*/
                     }
                 }
             }
