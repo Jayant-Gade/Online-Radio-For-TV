@@ -138,6 +138,8 @@ To get a local copy up and running follow these simple example steps.
 ## <img align="left" src="images/remote-control-2.svg" width="30" alt="Remote Usage" /> Usage
 
 Here are some usage examples done on an Android TV.
+
+Note:-Some features like Indian Default Stations was removed but will come in future.
 <table><tr><td>
   
 ### <img align="left" src="images/direction.svg" width="30" alt="D-Pad" />  <ins>Navigation Using D-Pad</ins>
@@ -160,7 +162,7 @@ Here are some usage examples done on an Android TV.
   
 ### <img align="left" src="images/menu.svg" width="30" alt="Menu" />  <ins>Context Menu For Fav/Recent</ins>
 * Click and hold stations to show context menu.
-* Change server of some default stations.
+* ~~Change server of some default stations.~~
 * Can delete and show info while playing.
 <img src="images/saved-context.gif" alt="TV Context Menu" />
 
@@ -172,9 +174,9 @@ Here are some usage examples done on an Android TV.
 
 ## <img align="left" src="images/roadmap-timeline.svg" width="30" alt="Roadmap" /> Roadmap
 
-- [x] Add Menu to change Language/Location of Default radio stations (Like Vividh Bharati-s2).
+- [x] ~~Add Menu to change Language/Location of Default radio stations (Like Vividh Bharati-s2).~~
 - [x] Add more info when holding station in Fav/Recent.
-- [x] Add context menu for Default Radio stations.
+- [x] ~~Add context menu for Default Radio stations.~~
 - [x] Add settings for customisation.
 - [ ] Record button.
 - [ ] Display off button.
