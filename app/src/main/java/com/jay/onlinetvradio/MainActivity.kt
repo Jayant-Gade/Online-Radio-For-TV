@@ -150,29 +150,12 @@ class MainActivity : AppCompatActivity() {
 
 
         //adding servers
+        //key(listOf(
+        //Triple(link,language,state),...))
         saveServerList(
             "Vividh Bharati",
             listOf(
-                Triple(
-                    "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
-                    "Hindi",
-                    "All India"
-                ),
-                Triple(
-                    "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
-                    "Marathi",
-                    "Nagpur"
-                ),
-                Triple(
-                    "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio238/hlspbaudio238_Auto.m3u8",
-                    "Hindi",
-                    "Delhi"
-                ),
-                Triple(
-                    "\thttps://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio011/hlspbaudio011_Auto.m3u8",
-                    "Marathi",
-                    "Mumbai"
-                )
+
             )
         )
 
@@ -185,8 +168,9 @@ class MainActivity : AppCompatActivity() {
                 "FirstRun", "entering first run!"
             )
 
-            updateStationStateAndLanguageInPrefs("Vividh Bharati-1+r2", "All India", "Hindi")
-            updateStationStateAndLanguageInPrefs("Vividh Bharati-2+r2", "Nagpur", "Marathi")
+            //updateStationStateAndLanguageInPrefs("Vividh Bharati-1+r2", "All India", "Hindi")
+           // updateStationStateAndLanguageInPrefs("Vividh Bharati-2+r2", "Nagpur", "Marathi")
+            //updateStationStateAndLanguageInPrefs("Big FM-+r1","Mumbai","Marathi")
         } else {
             Log.d("FirstRun", "No server list found for ")
         }
@@ -200,68 +184,68 @@ class MainActivity : AppCompatActivity() {
 
         //check if hide or show default section
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val enableDefaultSection = prefs.getBoolean("enable_default_section", true)
+        val enableDefaultSection = false//prefs.getBoolean("enable_default_section", false)
         if(enableDefaultSection) {
             // Add fixed stations directly:
             //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
             addStationButton(
                 "Radio City Freedom-+r1",
-                "https://onlineradiofm.in/assets/image/radio/180/PlanetRadioCity-Freedom.png",
-                "https://stream-140.zeno.fm/d6f5w51zrf9uv",
+                "",
+                "",
                 row1
             )
             addStationButton(
                 "Mirchi Love-+r1",
-                "https://liveradios.in/wp-content/uploads/mirchilove-1.jpg",
-                "https://2.mystreaming.net/uber/lrbollywood/icecast.audio",
+                "",
+                "",
                 row1
             )
             addStationButton(
                 "Big FM-+r1",
-                "https://upload.wikimedia.org/wikipedia/commons/7/74/BIGFM_NEW_LOGO_2019.png",
-                "https://listen.openstream.co/4434/audio",
+                "",
+                "",
                 row1
             )
             addStationButton(
                 "Red FM-+r1",
-                "https://api.redfmindia.in/filesvc/v1/file/01939efd-c535-444b-a928-88b0a0cabcd3/content",
-                "https://stream.zeno.fm/9phrkb1e3v8uv",
+                "",
+                "",
                 row1
             )
             addStationButton(
                 "Fever 104 FM-+r1",
-                "https://onlineradiohub.com/wp-content/uploads/2023/08/fever-fm-107_3.jpg",
-                "https://radio.canstream.co.uk:8115/live.mp3",
+                "",
+                "",
                 row1
             )
             addStationButton(
                 "Radio Mirchi-+r2",
-                "https://upload.wikimedia.org/wikipedia/en/a/a7/Radiomirchi.jpg",
-                "https://eu8.fastcast4u.com/proxy/clyedupq/stream",
+                "",
+                "",
                 row2
             )
             addStationButton(
                 "Vividh Bharati-1+r2",
-                "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
-                "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+                "",
+                "",
                 row2
             )
             addStationButton(
                 "Vividh Bharati-2+r2",
-                "https://indiaradio.in/wp-content/uploads/2024/01/vividh-bharati.jpg",
-                "https://air.pc.cdn.bitgravity.com/air/live/pbaudio070/playlist.m3u8",
+                "",
+                "",
                 row2
             )
             addStationButton(
                 "AIR FM Rainbow-+r2",
-                "https://onlineradiofm.in/assets/image/radio/180/all-india-air.webp",
-                "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00464kbps.m3u8",
+                "",
+                "",
                 row2
             )
             addStationButton(
                 "AIR FM Gold-+r2",
-                "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp",
-                "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio005_Auto.m3u8",
+                "",
+                "",
                 row2
             )
         }
