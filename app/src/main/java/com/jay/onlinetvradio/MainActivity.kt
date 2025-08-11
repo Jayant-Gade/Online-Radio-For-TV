@@ -700,6 +700,7 @@ class MainActivity : AppCompatActivity() {
                             MediaMetadata.Builder()
                                 .setTitle(name.substringBefore("+"))
                                 .setArtworkUri(iconUrl?.run(Uri::parse))
+                                .setStation(name)
                                 .build()
                         ).build()
 

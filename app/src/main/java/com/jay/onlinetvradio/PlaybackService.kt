@@ -4,10 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.common.Format
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Metadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
@@ -17,26 +14,17 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
-import androidx.media3.exoplayer.hls.HlsTrackMetadataEntry
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.exoplayer.source.TrackGroupArray
-import androidx.media3.exoplayer.trackselection.TrackSelectionArray
-import androidx.media3.extractor.metadata.emsg.EventMessage
-import androidx.media3.extractor.metadata.icy.IcyHeaders
 import androidx.media3.extractor.metadata.icy.IcyInfo
-import androidx.media3.extractor.metadata.id3.Id3Frame
-import androidx.media3.extractor.metadata.id3.TextInformationFrame
-import androidx.media3.extractor.metadata.id3.UrlLinkFrame
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.MediaStyleNotificationHelper
-import androidx.media3.ui.PlayerNotificationManager
 
 @UnstableApi
 class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var player: ExoPlayer
-
+    private lateinit var notification: NotificationCompat.Builder
     // Create your player and media session in the onCreate lifecycle event
 
     @OptIn(UnstableApi::class)
@@ -56,6 +44,26 @@ class PlaybackService : MediaSessionService() {
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
 
+        mediaSession = MediaSession.Builder(this, player)
+            .setSessionActivity(
+                PendingIntent.getActivity(
+                    this, 0,
+                    Intent(this, MainActivity::class.java),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            .build()
+
+        player.prepare()
+
+        notification = NotificationCompat.Builder(this, "radio-001")
+            .setContentTitle("Track Title")
+            .setContentText("Artist Name") // optional
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setStyle(
+                mediaSession?.let { MediaStyleNotificationHelper.MediaStyle(it) }
+                    ?.setShowActionsInCompactView(1) // play/pause
+            )
 
         player.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -81,9 +89,27 @@ class PlaybackService : MediaSessionService() {
                     val entry = metadata[i]
                     Log.d("Exodata","{$entry.toString()} {$i}")
                     if (entry is IcyInfo) {
-                        val title = entry.title // "Artist - Song"
+                        var title = entry.title?.substringAfter(" - ").takeIf { !it.isNullOrBlank() } ?: "Unknown Track"
                         val url = entry.url // optional stream URL
+                        val artist = entry.title?.substringBefore(" - ").takeIf { !it.isNullOrBlank() } ?: "Unknown Track"
                         Log.d("Exodata","Now playing: $title")
+                  //update notification
+                        val currentItem = player.currentMediaItem
+                        if (title=="Unknown Track"){
+                            title = currentItem?.mediaMetadata?.station as String
+                        }
+                        if (currentItem != null) {
+                            val updatedItem = currentItem.buildUpon()
+                                .setMediaMetadata(
+                                    currentItem.mediaMetadata.buildUpon()
+                                        .setTitle(title)
+                                        .setArtist(artist)
+                                        .build()
+                                )
+                                .build()
+                            player.replaceMediaItem(0, updatedItem)
+                        }
+                        //update ui
                         PlayerEvents.onMetadataUpdate?.invoke(entry.title)
                     }
 
@@ -118,30 +144,11 @@ class PlaybackService : MediaSessionService() {
             }
         })
 
-        mediaSession = MediaSession.Builder(this, player)
-            .setSessionActivity(
-                PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-            )
-            .build()
 
-        player.prepare()
-
-        val notification = NotificationCompat.Builder(this, "radio_playback_channel")
-            .setContentTitle("Track Title")
-            .setContentText("Artist Name") // optional
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setStyle(
-                mediaSession?.let { MediaStyleNotificationHelper.MediaStyle(it) }
-                    ?.setShowActionsInCompactView(1) // play/pause
-            )
             //.addAction(R.drawable.ic_pause, "Pause", pauseIntent)
-            .build()
 
-        startForeground(1234, notification)
+
+        //startForeground(1234, notification)
 
     }
 
