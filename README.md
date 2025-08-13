@@ -214,11 +214,13 @@ Distributed under the GNU General Public License v3.0 License. See `LICENSE` for
 
 This application uses publicly available radio streams and station metadata (including logos) retrieved from third-party services such as RadioBrowser.
 
-All logos, names, and trademarks belong to their respective owners.
+All station logos, names, data and trademarks are sourced from third parties and belong to their respective owners.
 
 This app is not affiliated with, endorsed by, or officially connected to any of the radio stations listed.
 
-I am not responsible for the accuracy, availability, or content of the stations and entries shown in the app, as this information is maintained by the community.
+The author of this app is not responsible for the accuracy, availability, or content of the stations and entries shown in the app, as this information is maintained by the community.
+
+This app does not host or provide any streaming links or URLs. Users are solely responsible for how they use the app and any content they access through it.
 
 <!-- CONTACT -->
 ## <img align="left" src="images/telephone.svg" width="30" alt="Telephone" /> Contact
