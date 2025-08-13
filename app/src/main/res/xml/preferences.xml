@@ -6,6 +6,11 @@
         android:title="Enable Default/Indian Radio station section."
         android:summary="Change requires restart."
         android:defaultValue="true" />
+    <SwitchPreferenceCompat
+        android:key="enable_playing_gif"
+        android:title="Enable Playing gif in right of now playing"
+        android:summary="Change requires restart."
+        android:defaultValue="true" />
     <ListPreference
         android:key="fav_columns"
         android:title="Number of Favorite stations per row"

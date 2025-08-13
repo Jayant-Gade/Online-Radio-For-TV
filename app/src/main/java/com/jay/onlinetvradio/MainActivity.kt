@@ -253,6 +253,12 @@ class MainActivity : AppCompatActivity() {
             val defaultSection = findViewById<View>(R.id.default_station)
             defaultSection.visibility = View.GONE
         }
+        //check if to show/hide playing gif
+        val enableplayinggif = prefs.getBoolean("enable_playing_gif", true)
+        if(!enableplayinggif){
+            playbackStatusGif.visibility=View.GONE
+        }
+
 
         //check if hide/show log window
         val enableLogWindow = prefs.getBoolean("enable_log_window", false)
