@@ -184,6 +184,8 @@ Note:-Some features like Indian Default Stations was removed but will come in fu
   - [x] Loading Animation over clicked station.
   - [x] Clicking animation on stations.
   - [ ] Popping out info panel Animation.
+  - [ ] Idle animation then display off.
+  
 
 See the [open issues](https://github.com/Jayant-Gade/Online-Radio-For-TV/issues) for a full list of proposed features (and known issues).
 
