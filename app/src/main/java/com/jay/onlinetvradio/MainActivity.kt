@@ -352,7 +352,7 @@ class MainActivity : AppCompatActivity() {
             if (mediaController.isPlaying) {
                 playbackStatusGif.postDelayed({
                     playbackStatusGif.controller?.animatable?.start()
-                }, 150)
+                }, 400)
             }
         }
     }
