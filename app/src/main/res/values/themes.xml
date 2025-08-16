@@ -4,6 +4,7 @@
         <item name="android:windowBackground">#000000</item>
         <item name="android:colorBackground">#000000</item>
         <item name="android:textColor">#FFFFFF</item>
+        <item name="android:forceDarkAllowed">true</item>
     </style>
     <style name="Theme.Radio.Search" parent="Theme.AppCompat.Dialog">
 
@@ -14,16 +15,23 @@
     </style>
     <style name="Theme.Radio.Info" parent="Theme.AppCompat.Dialog">
 
-        <item name="android:windowBackground">#1D1C1C</item>
+        <item name="android:windowBackground">#7E1D1C1C</item>
         <item name="android:colorBackground">#000000</item>
         <item name="android:textColor">#FFFFFF</item>
 
     </style>
+    <style name="Theme.Radio.Setting" parent="Theme.AppCompat.Dialog">
+
+        <item name="android:windowBackground">#001D1C1C</item>
+        <item name="android:colorBackground">#000000</item>
+        <item name="android:textColor">#FFFFFF</item>
+
+    </style>
+
     <style name="Theme.Radio.Server" parent="Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@drawable/border_background_server</item>
         <item name="android:colorBackground">#090909</item>
         <item name="android:textColor">#FFFFFF</item>
-
     </style>
 
 </resources>

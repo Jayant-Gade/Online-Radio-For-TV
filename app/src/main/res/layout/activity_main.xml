@@ -94,8 +94,8 @@
                     android:orientation="vertical" />
             </ScrollView>
 
-
         </LinearLayout>
+        <!--Optimization req -->
         <!-- Now playing info -->
         <LinearLayout
             android:id="@+id/now_playing"

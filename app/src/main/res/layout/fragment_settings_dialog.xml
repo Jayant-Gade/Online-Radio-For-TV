@@ -3,4 +3,5 @@
     android:id="@+id/settings_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/border_background_info" />
+    android:background="@drawable/border_background_info"
+    android:theme="@style/Theme.Radio.Setting"/>

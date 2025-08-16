@@ -11,6 +11,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         // set background color or drawable directly
-        view.setBackgroundResource(R.drawable.border_background_info)
+        //view.setBackgroundResource(R.drawable.border_background_info)
     }
 }
