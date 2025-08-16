@@ -280,12 +280,26 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/playbackStatusGif"
+                <FrameLayout
+                    android:id="@+id/playbackStatusView"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
-                    android:contentDescription="Playback status GIF"
-                    android:scaleType="centerInside" />
+                    android:clipToOutline="true">
+                    <ImageView
+                        android:id="@+id/playbackStatusImage1"
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:contentDescription="Playback status GIF"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/playing"/>
+                    <ImageView
+                        android:id="@+id/playbackStatusImage2"
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:contentDescription="Playback status GIF"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/playing"/>
+                </FrameLayout>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"

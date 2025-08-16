@@ -1,5 +1,8 @@
 package com.jay.onlinetvradio
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -11,6 +14,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
@@ -33,9 +38,6 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.drawee.interfaces.DraweeController
-import com.facebook.drawee.view.SimpleDraweeView
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logText: TextView
     private lateinit var radioIcon: ImageView
     private lateinit var mediaSession: MediaSession
+
 
     private val db = DBHelper(this, null)
 
@@ -88,9 +91,14 @@ class MainActivity : AppCompatActivity() {
     private var currentStreamName: String? = null
     private var currentStreamURL: String? = null
 
-
-    private lateinit var playbackStatusGif: SimpleDraweeView
-    private lateinit var controller: DraweeController
+/*
+    private lateinit var playbackStatusImage1: ImageView
+    private lateinit var playbackStatusImage2: ImageView*/
+    private lateinit var playbackStatusView: FrameLayout
+    private lateinit var playbackStatusAnim : AnimatorSet
+/*
+    lateinit var animator: ObjectAnimator
+    lateinit var animator2: ObjectAnimator*/
 
     var apiServer: String? = null
 
@@ -106,18 +114,37 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        val playbackStatusImage1 = findViewById<ImageView>(R.id.playbackStatusImage1)
+        val playbackStatusImage2 = findViewById<ImageView>(R.id.playbackStatusImage2)
+        playbackStatusView = findViewById<FrameLayout>(R.id.playbackStatusView)
+        val distancePx = 90 * resources.displayMetrics.density
+        val animator1 = ObjectAnimator.ofFloat(playbackStatusImage1, "translationX", -distancePx, 0f).apply {
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            repeatMode = ValueAnimator.RESTART
+        }
+        val animator2 = ObjectAnimator.ofFloat(playbackStatusImage2, "translationX", 0f, distancePx).apply {
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            repeatMode = ValueAnimator.RESTART
+        }
+        playbackStatusAnim = AnimatorSet().apply {
+            playTogether(animator1, animator2)
+        start()
+        pause() // start both at the same time
+        }
 
 
-
-        playbackStatusGif = findViewById<SimpleDraweeView>(R.id.playbackStatusGif)
-        val gifuri = Uri.parse("res://${packageName}/" + R.drawable.playing)
-        playbackStatusGif.setImageURI(gifuri)
-        controller = Fresco.newDraweeControllerBuilder()
+        //val gifuri = Uri.parse("res://${packageName}/" + R.drawable.playing)
+        //playbackStatusGif.setImageURI(gifuri)
+        /*controller = Fresco.newDraweeControllerBuilder()
             .setUri(gifuri)
             .setAutoPlayAnimations(false)
-            .build()
+            .build()*/
 
-        playbackStatusGif.controller = controller
+        //playbackStatusGif.controller = controller
         radioName = findViewById(R.id.radioName)
         radioName.isSelected = true
         radioTitle = findViewById(R.id.radioTitle)
@@ -256,7 +283,7 @@ class MainActivity : AppCompatActivity() {
         //check if to show/hide playing gif
         val enableplayinggif = prefs.getBoolean("enable_playing_gif", true)
         if(!enableplayinggif){
-            playbackStatusGif.visibility=View.GONE
+            playbackStatusView.visibility=View.GONE
         }
 
 
@@ -330,9 +357,11 @@ class MainActivity : AppCompatActivity() {
             updatePlaybackGif(isPlaying)
             playButtonAnimation(animatingView?.findViewById<View>(R.id.stationButtonBack),(if (isPlaying) 1 else 0)+1)
             if(isPlaying){
+                playbackStatusAnim.resume()
                 log("Playing: ${currentStreamName?.substringBefore("+")}")
             }
             else{
+                playbackStatusAnim.pause()
                 log("Paused: ${currentStreamName?.substringBefore("+")}")
             }
         }
@@ -356,15 +385,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if(!currentStreamName.isNullOrEmpty()) {
             if (mediaController.isPlaying) {
-                playbackStatusGif.postDelayed({
-                    playbackStatusGif.controller?.animatable?.start()
+                playbackStatusView.postDelayed({
+                    playbackStatusAnim.resume()
                 }, 400)
             }
         }
     }
     override fun onPause() {
+        playbackStatusAnim.pause()
         super.onPause()
-        playbackStatusGif.controller?.animatable?.stop()
+        //playbackStatusGif.controller?.animatable?.stop()
     }
     private fun addNewRow() {
         val newRow = LinearLayout(this).apply {
@@ -849,8 +879,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updatePlaybackGif(isPlaying: Boolean) {
-        val anim = playbackStatusGif.controller?.animatable
-        if (isPlaying) anim?.start() else anim?.stop()
+        //val anim = playbackStatusGif.controller?.animatable
+        //if (isPlaying) anim?.start() else anim?.stop()
+        if (isPlaying) playbackStatusAnim.resume() else playbackStatusAnim.pause()
 
     }
 
