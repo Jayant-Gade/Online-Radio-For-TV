@@ -617,7 +617,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         view.setOnClickListener {
-            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack),2)
+            playButtonAnimation(view.findViewById<View>(R.id.stationButtonBack),1)
             playStationDirect(name, iconUrl, link)
         }
         view.setOnLongClickListener {
