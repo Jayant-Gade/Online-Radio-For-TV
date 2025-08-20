@@ -46,6 +46,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.concurrent.thread
+import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
@@ -96,9 +97,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playbackStatusImage2: ImageView*/
     private lateinit var playbackStatusView: FrameLayout
     private lateinit var playbackStatusAnim : AnimatorSet
-/*
-    lateinit var animator: ObjectAnimator
-    lateinit var animator2: ObjectAnimator*/
+    var enableplayinggif by Delegates.notNull<Boolean>()
+    /*
+        lateinit var animator: ObjectAnimator
+        lateinit var animator2: ObjectAnimator*/
 
     var apiServer: String? = null
 
@@ -113,29 +115,38 @@ class MainActivity : AppCompatActivity() {
             this, 0, Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
-
+        var prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val playbackStatusImage1 = findViewById<ImageView>(R.id.playbackStatusImage1)
         val playbackStatusImage2 = findViewById<ImageView>(R.id.playbackStatusImage2)
         playbackStatusView = findViewById<FrameLayout>(R.id.playbackStatusView)
-        val distancePx = 90 * resources.displayMetrics.density
-        val animator1 = ObjectAnimator.ofFloat(playbackStatusImage1, "translationX", -distancePx, 0f).apply {
-            duration = 1000
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
-            repeatMode = ValueAnimator.RESTART
+        enableplayinggif = prefs.getBoolean("enable_playing_gif", true)
+        if(enableplayinggif) {
+            val distancePx = 90 * resources.displayMetrics.density
+            val animator1 =
+                ObjectAnimator.ofFloat(playbackStatusImage1, "translationX", -distancePx, 0f)
+                    .apply {
+                        duration = 1000
+                        repeatCount = ValueAnimator.INFINITE
+                        interpolator = LinearInterpolator()
+                        repeatMode = ValueAnimator.RESTART
+                    }
+            val animator2 =
+                ObjectAnimator.ofFloat(playbackStatusImage2, "translationX", 0f, distancePx).apply {
+                    duration = 1000
+                    repeatCount = ValueAnimator.INFINITE
+                    interpolator = LinearInterpolator()
+                    repeatMode = ValueAnimator.RESTART
+                }
+            playbackStatusAnim = AnimatorSet().apply {
+                playTogether(animator1, animator2)
+                start()
+                pause() // start both at the same time
+            }
         }
-        val animator2 = ObjectAnimator.ofFloat(playbackStatusImage2, "translationX", 0f, distancePx).apply {
-            duration = 1000
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
-            repeatMode = ValueAnimator.RESTART
+        //check if to show/hide playing gif
+        if(!enableplayinggif){
+            playbackStatusView.visibility=View.GONE
         }
-        playbackStatusAnim = AnimatorSet().apply {
-            playTogether(animator1, animator2)
-        start()
-        pause() // start both at the same time
-        }
-
 
         //val gifuri = Uri.parse("res://${packageName}/" + R.drawable.playing)
         //playbackStatusGif.setImageURI(gifuri)
@@ -159,13 +170,16 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        row1 = findViewById(R.id.row1)
-        row2 = findViewById(R.id.row2)
+        //row1 = findViewById(R.id.row1)
+        //row2 = findViewById(R.id.row2)
         row_s = findViewById(R.id.row_s)
 
         parentContainer = findViewById(R.id.parentContainer)
         addNewRow()
-        loadDynamicStations()
+
+        parentContainer.post {
+            loadDynamicStations()
+        }
 
         // Hide the status bar.
         //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -179,15 +193,15 @@ class MainActivity : AppCompatActivity() {
         //adding servers
         //key(listOf(
         //Triple(link,language,state),...))
-        saveServerList(
+        /*saveServerList(
             "Vividh Bharati",
             listOf(
 
             )
         )
-
+*/
         //add update states on first run to update states and languages
-        var prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
+        prefs = getSharedPreferences("stations_prefs", MODE_PRIVATE)
         val isFirstRun = prefs.getBoolean("is_first_run", true)
 
         if (isFirstRun) {
@@ -210,8 +224,8 @@ class MainActivity : AppCompatActivity() {
 
 
         //check if hide or show default section
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val enableDefaultSection = false//prefs.getBoolean("enable_default_section", false)
+        //prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        /*val enableDefaultSection = false//prefs.getBoolean("enable_default_section", false)
         if(enableDefaultSection) {
             // Add fixed stations directly:
             //addStationButton(name->"name-number(if 2 same)+rownumber",iconurl,streamurl,rownumber)
@@ -279,12 +293,8 @@ class MainActivity : AppCompatActivity() {
         else{
             val defaultSection = findViewById<View>(R.id.default_station)
             defaultSection.visibility = View.GONE
-        }
-        //check if to show/hide playing gif
-        val enableplayinggif = prefs.getBoolean("enable_playing_gif", true)
-        if(!enableplayinggif){
-            playbackStatusView.visibility=View.GONE
-        }
+        }*/
+
 
 
         //check if hide/show log window
@@ -356,13 +366,21 @@ class MainActivity : AppCompatActivity() {
             isPlaying ->
             updatePlaybackGif(isPlaying)
             playButtonAnimation(animatingView?.findViewById<View>(R.id.stationButtonBack),(if (isPlaying) 1 else 0)+1)
-            if(isPlaying){
-                playbackStatusAnim.resume()
-                log("Playing: ${currentStreamName?.substringBefore("+")}")
+            if(enableplayinggif) {
+                if (isPlaying) {
+                    playbackStatusAnim.resume()
+                    log("Playing: ${currentStreamName?.substringBefore("+")}")
+                } else {
+                    playbackStatusAnim.pause()
+                    log("Paused: ${currentStreamName?.substringBefore("+")}")
+                }
             }
-            else{
-                playbackStatusAnim.pause()
-                log("Paused: ${currentStreamName?.substringBefore("+")}")
+            else {
+                if (isPlaying) {
+                    log("Playing: ${currentStreamName?.substringBefore("+")}")
+                } else {
+                    log("Paused: ${currentStreamName?.substringBefore("+")}")
+                }
             }
         }
         PlayerEvents.onMetadataUpdate =
@@ -383,16 +401,19 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-        if(!currentStreamName.isNullOrEmpty()) {
-            if (mediaController.isPlaying) {
-                playbackStatusView.postDelayed({
-                    playbackStatusAnim.resume()
-                }, 400)
+        if(enableplayinggif) {
+            if (!currentStreamName.isNullOrEmpty()) {
+                if (mediaController.isPlaying) {
+                    playbackStatusView.postDelayed({
+                        playbackStatusAnim.resume()
+                    }, 400)
+                }
             }
         }
     }
     override fun onPause() {
-        playbackStatusAnim.pause()
+        if(enableplayinggif){
+        playbackStatusAnim.pause()}
         super.onPause()
         //playbackStatusGif.controller?.animatable?.stop()
     }
@@ -453,7 +474,7 @@ class MainActivity : AppCompatActivity() {
         var glowView: View? = null
         glowView = animatingView?.findViewById<View>(R.id.stationButtonBack)
         glowView?.clearAnimation()
-        glowView?.visibility = View.INVISIBLE
+        glowView?.visibility = View.GONE
         when(status){
             1 -> {
                 val fadeAnim = AnimationUtils.loadAnimation(view?.context, R.anim.gradient_motion)
@@ -471,7 +492,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
+/*
     private fun addStationButton(
         name: String,
         iconUrl: String?,
@@ -543,7 +564,7 @@ class MainActivity : AppCompatActivity() {
             }
         runOnUiThread { parent.addView(view, params) }
     }
-
+*//*
     private fun saveServerList(
         stationKey: String,
         servers: List<Triple<String, String, String>> // Pair<url, language>
@@ -564,7 +585,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+*/
     private fun addDynamicStation(
         name: String,
         iconUrl: String?,
@@ -572,11 +593,12 @@ class MainActivity : AppCompatActivity() {
         meta: JSONObject,
         skipDuplicateCheck: Boolean = false
     ) {
+        //for saving to db
         if (!skipDuplicateCheck) {
-                if (db.isStationExists(link)) {
-                    log("Station already added: $name")
-                    return
-                }
+            if (db.isStationExists(link)) {
+                log("Station already added: $name")
+                return
+            }
             else{
                 Log.d("database","call add station")
                 saveDynamicStation(name, iconUrl, link, meta)
@@ -617,7 +639,6 @@ class MainActivity : AppCompatActivity() {
         }
         addNewRow()
         runOnUiThread { dynamicRows.last().addView(view, params) }
-
 
     }
 
@@ -881,8 +902,9 @@ class MainActivity : AppCompatActivity() {
     private fun updatePlaybackGif(isPlaying: Boolean) {
         //val anim = playbackStatusGif.controller?.animatable
         //if (isPlaying) anim?.start() else anim?.stop()
-        if (isPlaying) playbackStatusAnim.resume() else playbackStatusAnim.pause()
-
+        if(enableplayinggif) {
+            if (isPlaying) playbackStatusAnim.resume() else playbackStatusAnim.pause()
+        }
     }
 
 

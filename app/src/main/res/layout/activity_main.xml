@@ -21,81 +21,83 @@
 
 
         <!-- Rows for dynamic button stations -->
-
-        <LinearLayout
-            android:id="@+id/default_station"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/section_background"
-            android:paddingHorizontal="5dp"
-            android:paddingBottom="0dp"
-            app:layout_constraintTop_toBottomOf="@id/row_s"
-            android:layout_margin="5dp">
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#FFF19C"
-                android:textAlignment="center"
-                android:padding="5dp"
-                android:text="@string/default_station_heading" />
-            <LinearLayout
-                android:id="@+id/row1"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/station_button_row_height"
-                android:gravity="center"
-                android:layout_marginBottom="@dimen/station_row_padding_bottom" />
-
-            <LinearLayout
-                android:id="@+id/row2"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/station_button_row_height"
-                android:gravity="center"
-                android:layout_marginBottom="@dimen/station_row_padding_bottom" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fav_section"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/section_background"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/default_station"
-            app:layout_constraintBottom_toTopOf="@id/now_playing"
-            android:paddingHorizontal="5dp"
-            android:paddingBottom="10dp">
-
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Favorites/Recents"
-                android:textAlignment="center"
-                android:textColor="#FFF19C"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+        <!--
                 <LinearLayout
-                    android:id="@+id/parentContainer"
+                    android:id="@+id/default_station"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+                    android:orientation="vertical"
+                    android:background="@drawable/section_background"
+                    android:paddingHorizontal="5dp"
+                    android:paddingBottom="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/row_s"
+                    android:layout_margin="5dp">
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFF19C"
+                        android:textAlignment="center"
+                        android:padding="5dp"
+                        android:text="@string/default_station_heading" />
+                    <LinearLayout
+                        android:id="@+id/row1"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/station_button_row_height"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/station_row_padding_bottom" />
 
-        </LinearLayout>
-        <!--Optimization req -->
+                    <LinearLayout
+                        android:id="@+id/row2"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/station_button_row_height"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/station_row_padding_bottom" />
+                </LinearLayout>
+                will add card feature here
+
+        -->
+                <LinearLayout
+                    android:id="@+id/fav_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/section_background"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/row_s"
+                    app:layout_constraintBottom_toTopOf="@id/now_playing"
+                    android:paddingHorizontal="5dp"
+                    android:paddingBottom="10dp">
+
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Favorites/Recents"
+                        android:textAlignment="center"
+                        android:textColor="#FFF19C"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/parentContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </ScrollView>
+
+                </LinearLayout>
+                <!--Optimization req -->
         <!-- Now playing info -->
         <LinearLayout
             android:id="@+id/now_playing"
