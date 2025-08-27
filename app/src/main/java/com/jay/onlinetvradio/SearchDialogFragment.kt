@@ -2,7 +2,10 @@ package com.jay.onlinetvradio
 
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
@@ -22,6 +25,7 @@ class SearchDialogFragment(private val onSelect: (station: JSONObject) -> Unit) 
     private val okHttpClient = OkHttpClient()
     private var apiServer: String? = null
     private lateinit var adapter: StationAdapter
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         apiServer = (activity as? MainActivity)?.apiServer
@@ -74,7 +78,23 @@ class SearchDialogFragment(private val onSelect: (station: JSONObject) -> Unit) 
                 val url = "https://$server/json/stations/search?limit=10&name=$query&hidebroken=true"
                 val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
                 val body = response.body?.string()
-                if (!response.isSuccessful || body.isNullOrEmpty()) return@thread
+                //Log.e("MyApiCheck", "search initiate.")
+                //Log.d("ApiResponse", "Response Code: ${response.code}")
+                //Log.d("ApiResponse", "Response Body: $body")
+                if (!response.isSuccessful || body.isNullOrEmpty()){
+                    mainHandler.post {
+                        context?.let { nonNullContext ->
+                            Toast.makeText(nonNullContext, "Search Failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    return@thread}
+                if (body == "[]"){
+                    mainHandler.post {
+                        context?.let { nonNullContext ->
+                            Toast.makeText(nonNullContext, "No Result Found", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    return@thread}
                 val arr = JSONArray(body)
                 val list = mutableListOf<JSONObject>()
                 for (i in 0 until arr.length()) list.add(arr.getJSONObject(i))
@@ -82,6 +102,7 @@ class SearchDialogFragment(private val onSelect: (station: JSONObject) -> Unit) 
                     adapter.setData(list)
                     onLoaded()
                 }
+
 
             } catch (e: Exception) {
                 requireActivity().runOnUiThread {
