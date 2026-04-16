@@ -49,3 +49,4 @@ proguard-rules.pro
 ndkBuild/
 /.idea/
 /.kotlin/
+*.md

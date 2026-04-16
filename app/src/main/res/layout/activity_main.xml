@@ -1,323 +1,328 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.jay.onlinetvradio.ui.SafeAreaLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="1dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:orientation="vertical" android:padding="0dp"
-        android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/row_s"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            android:orientation="horizontal" />
-
-
-        <!-- Rows for dynamic button stations -->
-        <!--
-                <LinearLayout
-                    android:id="@+id/default_station"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/section_background"
-                    android:paddingHorizontal="5dp"
-                    android:paddingBottom="0dp"
-                    app:layout_constraintTop_toBottomOf="@id/row_s"
-                    android:layout_margin="5dp">
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFF19C"
-                        android:textAlignment="center"
-                        android:padding="5dp"
-                        android:text="@string/default_station_heading" />
-                    <LinearLayout
-                        android:id="@+id/row1"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/station_button_row_height"
-                        android:gravity="center"
-                        android:layout_marginBottom="@dimen/station_row_padding_bottom" />
-
-                    <LinearLayout
-                        android:id="@+id/row2"
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/station_button_row_height"
-                        android:gravity="center"
-                        android:layout_marginBottom="@dimen/station_row_padding_bottom" />
-                </LinearLayout>
-                will add card feature here
-
-        -->
-                <LinearLayout
-                    android:id="@+id/fav_section"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/section_background"
-                    android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@id/row_s"
-                    app:layout_constraintBottom_toTopOf="@id/now_playing"
-                    android:paddingHorizontal="5dp"
-                    android:paddingBottom="10dp">
-
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Favorites/Recents"
-                        android:textAlignment="center"
-                        android:textColor="#FFF19C"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <LinearLayout
-                            android:id="@+id/parentContainer"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical" />
-                    </ScrollView>
-
-                </LinearLayout>
-                <!--Optimization req -->
-        <!-- Now playing info -->
-        <LinearLayout
-            android:id="@+id/now_playing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:orientation="vertical"> <!-- Now playing sections -->
-
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:orientation="vertical" android:padding="0dp"
+            android:layout_width="match_parent" android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/row_s"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="1dp"
-                android:layout_margin="0dp">
+                android:layout_marginBottom="0dp"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="horizontal" />
 
-                <ImageView
-                    android:id="@+id/radioIcon"
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="fitCenter"
-                    android:padding="0dp"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+
+            <!-- Rows for dynamic button stations -->
+            <!--
                     <LinearLayout
+                        android:id="@+id/default_station"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/section_background"
+                        android:paddingHorizontal="5dp"
+                        android:paddingBottom="0dp"
+                        app:layout_constraintTop_toBottomOf="@id/row_s"
+                        android:layout_margin="5dp">
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:gravity="center"
-                            android:text="💿"
-                            android:textSize="18sp" />
-                        <TextView
-                            android:id="@+id/radioTitle"
+                            android:id="@+id/textView2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:gravity="center"
-                            android:text="Not playing"
-                            android:textIsSelectable="true"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:gravity="center"
-                            android:text="👤"
-                            android:textSize="18sp" />
-                        <TextView
-                            android:id="@+id/radioArtist"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:layout_weight="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textIsSelectable="true"
-                            android:gravity="center"
-                            android:text="Not playing"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:gravity="top"
-                            android:text="📻"
-                            android:textSize="18sp" />
-                        <TextView
-                            android:id="@+id/radioName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:gravity="center"
-                            android:text="Not playing"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:singleLine="true"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:gravity="center"
-                            android:text=" ⚙️"
-                            android:textSize="12sp" />
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFF19C"
+                            android:textAlignment="center"
+                            android:padding="5dp"
+                            android:text="@string/default_station_heading" />
                         <LinearLayout
-                            android:id="@+id/qualityInfo"
+                            android:id="@+id/row1"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/station_button_row_height"
+                            android:gravity="center"
+                            android:layout_marginBottom="@dimen/station_row_padding_bottom" />
+
+                        <LinearLayout
+                            android:id="@+id/row2"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/station_button_row_height"
+                            android:gravity="center"
+                            android:layout_marginBottom="@dimen/station_row_padding_bottom" />
+                    </LinearLayout>
+                    will add card feature here
+
+            -->
+            <LinearLayout
+                android:id="@+id/fav_section"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/section_background"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/row_s"
+                app:layout_constraintBottom_toTopOf="@id/now_playing"
+                android:paddingHorizontal="5dp"
+                android:paddingBottom="10dp">
+
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="Favorites/Recents"
+                    android:textAlignment="center"
+                    android:textColor="#FFF19C"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/parentContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
+
+            </LinearLayout>
+            <!--Optimization req -->
+            <!-- Now playing info -->
+            <LinearLayout
+                android:id="@+id/now_playing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="vertical"> <!-- Now playing sections -->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="1dp"
+                    android:layout_margin="0dp">
+
+                    <ImageView
+                        android:id="@+id/radioIcon"
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:scaleType="fitCenter"
+                        android:padding="0dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:gravity="center"
                             android:orientation="horizontal">
                             <TextView
-                                android:id="@+id/qualityCodec"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:maxLines="1"
+                                android:lines="1"
                                 android:ellipsize="marquee"
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:scrollHorizontally="true"
                                 android:singleLine="true"
                                 android:gravity="center"
-                                android:textColor="#00E6FF"
-                                android:text=""
-                                android:textSize="12sp" />
+                                android:text="💿"
+                                android:textSize="18sp" />
                             <TextView
-                                android:id="@+id/qualityBitrate"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/radioTitle"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:maxLines="1"
+                                android:lines="1"
                                 android:ellipsize="marquee"
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:scrollHorizontally="true"
                                 android:singleLine="true"
                                 android:gravity="center"
-                                android:textColor="#00E6FF"
-                                android:text=""
-                                android:textSize="12sp" />
+                                android:text="Not playing"
+                                android:textIsSelectable="true"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
                             <TextView
-                                android:id="@+id/qualityChannel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:maxLines="1"
+                                android:lines="1"
                                 android:ellipsize="marquee"
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:scrollHorizontally="true"
                                 android:singleLine="true"
                                 android:gravity="center"
-                                android:textColor="#00E6FF"
-                                android:text="Quality Info"
+                                android:text="👤"
+                                android:textSize="18sp" />
+                            <TextView
+                                android:id="@+id/radioArtist"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:lines="1"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textIsSelectable="true"
+                                android:gravity="center"
+                                android:text="Not playing"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:lines="1"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:gravity="top"
+                                android:text="📻"
+                                android:textSize="18sp" />
+                            <TextView
+                                android:id="@+id/radioName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:gravity="center"
+                                android:text="Not playing"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:gravity="center"
+                                android:text=" ⚙️"
                                 android:textSize="12sp" />
+                            <LinearLayout
+                                android:id="@+id/qualityInfo"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/qualityCodec"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:ellipsize="marquee"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:gravity="center"
+                                    android:textColor="#00E6FF"
+                                    android:text=""
+                                    android:textSize="12sp" />
+                                <TextView
+                                    android:id="@+id/qualityBitrate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:ellipsize="marquee"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:gravity="center"
+                                    android:textColor="#00E6FF"
+                                    android:text=""
+                                    android:textSize="12sp" />
+                                <TextView
+                                    android:id="@+id/qualityChannel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:ellipsize="marquee"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:scrollHorizontally="true"
+                                    android:singleLine="true"
+                                    android:gravity="center"
+                                    android:textColor="#00E6FF"
+                                    android:text="Quality Info"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+                    <FrameLayout
+                        android:id="@+id/playbackStatusView"
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:clipToOutline="true">
+                        <ImageView
+                            android:id="@+id/playbackStatusImage1"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:contentDescription="Playback status GIF"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/playing"/>
+                        <ImageView
+                            android:id="@+id/playbackStatusImage2"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:contentDescription="Playback status GIF"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/playing"/>
+                    </FrameLayout>
                 </LinearLayout>
-                <FrameLayout
-                    android:id="@+id/playbackStatusView"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:clipToOutline="true">
-                    <ImageView
-                        android:id="@+id/playbackStatusImage1"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:contentDescription="Playback status GIF"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/playing"/>
-                    <ImageView
-                        android:id="@+id/playbackStatusImage2"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:contentDescription="Playback status GIF"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/playing"/>
-                </FrameLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/border_height"
+                    android:background="#8CFFFFFF"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:layout_marginBottom="@dimen/border_margin"/>
+                <TextView
+                    android:id="@+id/logText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:background="@color/black"
+                    android:ellipsize="end"
+                    android:textSize="12sp"
+                    android:layout_marginTop="0dp"/>
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/border_height"
-                android:background="#8CFFFFFF"
-                android:layout_marginTop="@dimen/border_margin"
-                android:layout_marginBottom="@dimen/border_margin"/>
-            <TextView
-                android:id="@+id/logText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:background="@color/black"
-                android:ellipsize="end"
-                android:textSize="12sp"
-                android:layout_marginTop="0dp"/>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</com.jay.onlinetvradio.ui.SafeAreaLayout>

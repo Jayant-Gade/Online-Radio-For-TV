@@ -22,6 +22,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.net.toUri
@@ -107,6 +108,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("UseKtx")
     @androidx.media3.common.util.UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
