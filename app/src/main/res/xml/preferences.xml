@@ -33,4 +33,13 @@
         android:title="Enable Log window"
         android:summary="Enable Log window at the bottom of screen. (1 line space) (Requires Restart)"
         android:defaultValue="false" />
+
+    <Preference
+        android:key="privacy_policy"
+        android:title="Privacy Policy"
+        android:summary="Open Privacy Policy in browser">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="@string/privacy_policy_url" />
+    </Preference>
 </PreferenceScreen>
